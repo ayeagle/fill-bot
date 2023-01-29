@@ -1,10 +1,31 @@
 import styles from './App.module.css'
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 
 function App() {
 
   const domainElements = location.hostname.split(".");
+  const [emailOnPage, setEmailOnPage] = useState(false);
+  const [emailOnFile, setEmailOnFile] = useState(true)
+  const [email, setEmail] = useState('')
+  const [tempEmail, setTempEmail] = useState('')
+  const [emailFront, setEmailFront] = useState('')
+  const [emailBack, setEmailBack] = useState('')
+  const [responsePrompt, setResponsePrompt] = useState('')
+  const [subVal, setSubVal] = useState('')
+
+  useEffect(() => {
+    const emailCheck = localStorage.getItem('email')
+    if (emailCheck) {
+      setEmail(emailCheck)
+      setEmailOnFile(true)
+    } else {
+      setEmailOnFile(false)
+    }
+
+    console.log("this is the local storage value of email")
+    console.log(localStorage.getItem('email'))
+  }, [])
 
   let normalName: string;
 
@@ -48,8 +69,11 @@ function App() {
 
     inputElements.forEach(input => {
       // if input.name or placeholder AND type == text
-      if (inputChecker(input.name, 'EMAIL') || inputChecker(input.placeholder, 'EMAIL') || inputChecker(input.type, 'EMAIL')) {
-        input.value = 'alexyeagle+lemondade@gmail.com';
+      if ((inputChecker(input.name, 'EMAIL') || inputChecker(input.placeholder, 'EMAIL') || inputChecker(input.type, 'EMAIL')) && input.id !== 'no_fill_email_input') {
+        setEmailOnPage(true)
+        // input.value = 'alexyeagle+lemondade@gmail.com';
+        setSubVal(`${emailFront}+${normalName}${emailBack}`)
+        input.value = subVal;
         console.log(input)
         console.log(normalName)
         input.dispatchEvent(new Event('input'));
@@ -68,19 +92,93 @@ function App() {
     }, 2000);
   }, [])
 
-  console.log("I guess we're live out here huuuuhhhhh")
+  const validEmailCheck = (email: string) => {
+
+    const checker = (val: string) => {
+      return email.toUpperCase().indexOf(val)
+    }
+
+    if (checker("@") === -1
+      || (
+        checker("@GMAIL.COM") === -1
+        && checker("@YAHOO.COM") === -1
+        && checker("@HOTMAIL.COM") === -1
+      )
+    ) {
+      setResponsePrompt("huh that doesn't look like a valid email format")
+      return false
+    }
+    setEmailFront(email.substring(0, email.toUpperCase().indexOf("@")))
+    setEmailBack(email.substring(email.toUpperCase().indexOf("@"), email.length))
+
+    return true;
 
 
-  // alert("ASSUUUUHHHHH")
+  }
+
+
+  const registerEmail = () => {
+
+    //checkEmail
+    if (validEmailCheck(tempEmail)) {
+      setEmail(tempEmail)
+      setEmailOnFile(true)
+      localStorage.setItem('email', tempEmail)
+      console.log("this is the local storage value of email")
+      console.log(localStorage.getItem('email'))
+      fill()
+      
+    }
+  }
+  console.log(email)
+
 
   return (
-    <div className={styles.tester} >
-      <header>
-        <div>Working on the styles</div>
-        {/* <h2>Hello From React App 👋</h2> */}
-      </header>
+    <div className={emailOnPage ? styles.tester_after : styles.tester} >
+      {/* <header> */}
+      <div className={styles.container}>
+
+        {emailOnFile ? (
+
+          <div className={styles.container}>
+            <div style={{ fontSize: "1.7vw", position: "relative" }} >Email form on the page!</div>
+            <br></br>
+
+            <div style={{ fontSize: "1.3vw", position: "relative" }} >Do you want to fill it with:</div>
+            <br></br>
+            <input className={styles.example}
+              value={subVal}
+            />
+            <br></br>
+
+            <button className={styles.fill_button}>Hell yeah!</button>
+          </div>
+        ) : (
+          <div className={styles.container}>
+            <div style={{ fontSize: "1.7vw", position: "relative" }} >Let's get you set up!</div>
+            <br></br>
+
+            <div style={{ fontSize: "1.3vw", position: "relative" }} >What email do you normally sign up with?</div>
+            <br></br>
+            <input className={styles.example}
+              id='no_fill_email_input'
+              onChange={(e) => {
+                setTempEmail(e.target.value)
+              }}
+            />
+            <br></br>
+
+            {responsePrompt}
+            <br></br>
+
+            <button className={styles.fill_button} onClick={registerEmail}>Register as main email!</button>
+          </div>)}
+
+      </div>
+      {/* <h2>Hello From React App 👋</h2> */}
+      {/* </header> */}
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

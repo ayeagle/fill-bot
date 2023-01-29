@@ -1,12 +1,89 @@
+
+
 .tester {
-    background-color: rgb(184, 184, 184);
-    color:rgb(23, 0, 68);
+    background-color: rgb(255, 255, 255);
+    color:rgba(23, 0, 68, 0);
+    font-size: 2vw;
     position: absolute;
-    box-shadow: 0 0 100px 100px black;
-    height: 20vw;
-    width: 20vw;
-    display: none;
-    top: 0%;
-    left: 200%;
+    /* box-shadow: 0 0 20px 20px black; */
+    top:-40vw;
+    height: 0vw;
+    width: 80%;
+    /* display: none; */
+    /* top: 0%;
+    right:0; */
+    margin: 2vw;
     border-radius: 20px;
+    transition: .2s;
+    padding: 2vw;
+    justify-content: center;
+    text-align: center;
+    left: 10%;
+}
+
+
+
+.tester_after {
+    background-color: rgb(255, 255, 255);
+    color:rgb(23, 0, 68);
+    font-size: 2vw;
+    position: absolute;
+    box-shadow: 0 0 20px 20px rgba(0, 0, 0, 0.324);
+    /* height: 20vw; */
+    width: 80%;
+    top: 2vw;
+    /* display: none; */
+    /* top: 0%;
+    right:0; */
+    margin: 2vw;
+    border-radius: 20px;
+    transition: .8s;
+    padding: 2vw;
+    justify-content: center;
+    text-align: center;
+    left: 10%;
+}
+
+.container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+}
+
+.example {
+    position: relative;
+
+    border: 0px;
+    border-bottom: 1px solid black;
+    justify-content: center;
+}
+
+.fill_button{
+    position: relative;
+
+    border-radius: 10px;
+    background-color: black;
+    color: white;
+    transition: .1s;
+    width: 60%;
+    left: 15%;
+        padding: 1vw;
+        font-size: 1.5vw;
+    }
+
+.fill_button:hover{
+    position: relative;
+
+    border-radius: 10px;
+    background-color: black;
+    color: white;
+    opacity: 80%;
+    transition: .1s;
+    width: 60%;
+    left: 15%;
+    padding: 1vw;
+    font-size: 1.5vw;
+
 }
