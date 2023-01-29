@@ -1,0 +1,12 @@
+.tester {
+    background-color: rgb(184, 184, 184);
+    color:rgb(23, 0, 68);
+    position: absolute;
+    box-shadow: 0 0 100px 100px black;
+    height: 20vw;
+    width: 20vw;
+    display: none;
+    top: 0%;
+    left: 200%;
+    border-radius: 20px;
+}
