@@ -11,9 +11,9 @@ const globalStyles = document.createElement("style");
 globalStyles.innerHTML = `
   #${rootElement.id} {
   position: fixed;
-  left: 0;
+  right: 5vw;
   top: 0;
-  width: 0px;
+  width: 25%;
   height: 0vh;
   background: #ffffff;
   z-index: 999999999;
