@@ -1,6 +1,11 @@
 import styles from './App.module.css'
 import { useEffect, useState } from 'react';
-import { isConditionalExpression } from 'typescript';
+import * as icons from 'react-icons/fa';
+// import { isConditionalExpression } from 'typescript';
+import { faXmark } from '@fortawesome/free-solid-svg-icons';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 
 let normalName: string;
 
@@ -8,10 +13,17 @@ declare var window: any;
 
 const chrome = window.chrome;
 
+let logo: any;
 
-// let sharedData = {
-//   email: null,
-// };
+let allInputs: any;
+
+let allEmailInputs: HTMLInputElement[] = [];
+
+let permanentArray: Array<string> = [];
+
+//still need to actually write the permanent array
+//somewhere that is... permanent lol
+
 
 function App() {
 
@@ -24,6 +36,11 @@ function App() {
   const [emailBack, setEmailBack] = useState('')
   const [responsePrompt, setResponsePrompt] = useState('')
   const [subVal, setSubVal] = useState('')
+  const [waiter, setWaiter] = useState(false)
+  const [dismiss, setDismiss] = useState(false)
+  // const [allInputs, setAllInputs] = useState()
+  console.log("this bitch be the perma array")
+  console.log(permanentArray)
 
 
   //everytime that someone uses the fill function, add it to a local storage value
@@ -35,6 +52,16 @@ function App() {
   //BECAUSE RIGHT NOW THE EMAIL IS ONLY POPULATED CORRECTLY IF YOU
   //ENTER IT ON THAT EXACT PAGE LOAD, BUT NOT IN BETWEENs
 
+
+  //add logic to not fire if there is also a password form on the page
+  //add the ability to hit "enter" to move forward
+  // add animations for copied to clipboard
+  //
+
+  //add animations for the copy button
+  //add the ability to change your base email
+  //fighure out some goddamned permanent storage lol
+
   useEffect(() => {
 
     if (domainElements.length === 2) {
@@ -45,19 +72,27 @@ function App() {
       normalName = "We couldn't find a name :("
     }
 
+    allInputs = (Array.from(document.querySelectorAll('input')))
+
+    chrome.runtime.sendMessage({ type: 'getLogo' }, (response: any) => {
+      logo = response.logo
+    })
+
 
     chrome.runtime.sendMessage({ type: 'getEmail' }, (response: any) => {
       console.log(response)
-      if (response.data.email !== undefined) {
+      if (response.email !== '') {
         console.log("first if was invoked")
-        setEmail(response.data.email)
+        configEmailDetails(response.email)
       } else {
         console.log("second if was invoked")
         setEmailOnFile(false)
       }
     })
 
-    fill()
+    pageContainsEmailFields(allInputs)
+
+    // fill()
   }, [window.location.href])
 
 
@@ -75,20 +110,42 @@ function App() {
 
     setSubVal(`${email.substring(0, email.toUpperCase().indexOf("@"))}+${normalName}${email.substring(email.toUpperCase().indexOf("@"), email.length)}`)
     // console.log(`${emailFront}+${normalName}${emailBack}`)
-
     console.log("///////////////////////////")
-
   }
 
 
+  const pageContainsEmailFields = (inputsArray: Array<any>) => {
 
-  // function waiter() {
-  //   return new Promise(resolve => {
-  //     setTimeout(() => {
-  //       resolve('resolved');
-  //     }, 1000);
-  //   });
-  // }
+    inputsArray.forEach((input, index) => {
+      // if input.name or placeholder AND type == text
+      if (
+        (
+          inputChecker(input.name, 'EMAIL')
+          || inputChecker(input.placeholder, 'EMAIL')
+          || inputChecker(input.type, 'EMAIL')
+        ) && input.id !== 'no_fill_email_input'
+      ) {
+        if (inputsArray.length > index + 1) {
+          if (!inputChecker(inputsArray[index + 1].name, 'PASSWORD')
+            && !inputChecker(inputsArray[index + 1].placeholder, 'PASSWORD')
+            && !inputChecker(inputsArray[index + 1].type, 'PASSWORD')) {
+            setEmailOnPage(true)
+            input.value = subVal
+            allEmailInputs.push(input)
+            // return true
+          }
+        } else {
+          setEmailOnPage(true)
+          input.value = subVal
+          allEmailInputs.push(input)
+          // return true
+        }
+      }
+      // return false
+    })
+    console.log("this is the all email inputs object")
+    console.log(allEmailInputs)
+  };
 
 
   const inputChecker = (checkVal: string, searchVal: string) => {
@@ -96,6 +153,27 @@ function App() {
   }
 
   async function fill() {
+
+    if (allEmailInputs.length > 0 && allEmailInputs[0] != null) {
+      const targetElement = document.getElementById(allEmailInputs[0].id);
+      if (targetElement != null) {
+        targetElement.scrollIntoView();
+        const origBackgroundColor = targetElement.style.backgroundColor;
+        const origColor = targetElement.style.color;
+
+        targetElement.style.backgroundColor = 'rgb(76, 115, 255)';
+        targetElement.style.color = 'white';
+
+        setTimeout(() => {
+          targetElement.style.backgroundColor = origBackgroundColor;
+          targetElement.style.color = origColor;
+
+          targetElement.style.transition = '2s';
+        }, 1);
+      }
+    }
+
+
 
     console.log("SUBVAL WITHIN THE FILL FUNCTION:  " + subVal)
     // await waiter();
@@ -105,15 +183,20 @@ function App() {
       // if input.name or placeholder AND type == text
       if ((inputChecker(input.name, 'EMAIL') || inputChecker(input.placeholder, 'EMAIL') || inputChecker(input.type, 'EMAIL')) && input.id !== 'no_fill_email_input') {
         setEmailOnPage(true)
+        console.log("this is the type of the input field")
+        console.log(typeof input)
         input.value = subVal
+        permanentArray.push(subVal)
       }
     });
+    setDismiss(true)
   }
 
   useEffect(() => {
     setInterval(() => {
+      setWaiter(true)
       // fill()
-    }, 2000);
+    }, 10);
   }, [])
 
   const validEmailCheck = (email: string) => {
@@ -139,66 +222,72 @@ function App() {
 
   }
 
-
   const registerEmail = () => {
-
-    //checkEmail
     if (validEmailCheck(tempEmail)) {
       configEmailDetails(tempEmail)
-      // localStorage.setItem('email', tempEmail)
-      // console.log("this is the local storage value of email")
-      // console.log(localStorage.getItem('email'))
-      // fill()
-
     }
   }
-  console.log(email)
+
+  // console.log(email)
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(subVal)
+  }
 
 
   return (
-    <div className={emailOnPage ? styles.tester_after : styles.tester} >
-      {/* <header> */}
-      <div className={styles.container}>
+    <div className={styles.master_styles}>
+      <div className={emailOnPage && waiter && !dismiss ? styles.tester_after : styles.tester} >
+        {/* <header> */}
+        <div className={styles.container}>
+          <button className={styles.x_button} onClick={() => setDismiss(!dismiss)}> <FontAwesomeIcon icon={faXmark} /></button>
+          <img className={styles.image_container} src={logo} />
+          <br></br>
 
-        {emailOnFile ? (
+          {emailOnFile ? (
 
-          <div className={styles.container}>
-            <div style={{ fontSize: "1.7vw", position: "relative" }} >Email form on the page!</div>
-            <br></br>
+            <div className={styles.container}>
+              <div style={{ fontSize: "1.7vw", position: "relative" }} >Email form on the page!</div>
+              <br></br>
 
-            <div style={{ fontSize: "1.3vw", position: "relative" }} >Do you want to fill it with:</div>
-            <br></br>
-            <input className={styles.example}
-              value={subVal}
-            />
-            <br></br>
+              <div style={{ fontSize: "1.3vw", position: "relative" }} >Do you want to fill email forms?</div>
+              <br></br>
 
-            <button className={styles.fill_button}>Hell yeah!</button>
-          </div>
-        ) : (
-          <div className={styles.container}>
-            <div style={{ fontSize: "1.7vw", position: "relative" }} >Let's get you set up!</div>
-            <br></br>
+              <div style={{ position: "relative", display: "flex", flexDirection: "row", justifyContent: "space-around", borderBottom: "1px solid black" }}>
+                <div className={styles.example_fader} />
+                <input className={styles.example}
+                  value={subVal}
+                />
 
-            <div style={{ fontSize: "1.3vw", position: "relative" }} >What email do you normally sign up with?</div>
-            <br></br>
-            <input className={styles.example}
-              id='no_fill_email_input'
-              onChange={(e) => {
-                setTempEmail(e.target.value)
-              }}
-            />
-            <br></br>
+                <button className={styles.other_button} onClick={copyToClipboard}><icons.FaCopy /></button>
+              </div>
+              <br></br>
 
-            {responsePrompt}
-            <br></br>
+              <button className={styles.fill_button} onClick={fill}>Fill away!</button>
+            </div>
+          ) : (
+            <div className={styles.container}>
+              <div style={{ fontSize: "1.7vw", position: "relative" }} >Let's get you set up!</div>
+              <br></br>
 
-            <button className={styles.fill_button} onClick={registerEmail}>Register as main email!</button>
-          </div>)}
+              <div style={{ fontSize: "1.3vw", position: "relative" }} >What email do you normally sign up with?</div>
+              <br></br>
+              <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-around", borderBottom: "1px solid black" }}>
 
+                <input className={styles.example}
+                  id='no_fill_email_input'
+                  onChange={(e) => {
+                    setTempEmail(e.target.value)
+                  }}
+                />
+              </div>
+              <br></br>
+              {responsePrompt}
+              <br></br>
+              <button className={styles.fill_button} onClick={registerEmail}>Register main email</button>
+            </div>)}
+        </div>
       </div>
-      {/* <h2>Hello From React App 👋</h2> */}
-      {/* </header> */}
     </div>
   )
 }

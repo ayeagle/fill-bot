@@ -4,13 +4,26 @@
   "manifest_version": 3,
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"]
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content.js"
+      ]
     }
-    
   ],
   "background": {
-    "scripts": ["Background.js"],
-    "persistent": false
-  }
+    "service_worker": "Background.js"
+  },
+  "permissions": [
+    "storage"
+    ],
+  "web_accessible_resources": [
+    {
+      "resources": ["images/fillbot.png"],
+      "matches": [ "https://*/*" ]
+
+    }
+  ]
+
 }
