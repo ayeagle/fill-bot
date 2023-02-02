@@ -20,7 +20,7 @@
     ],
   "web_accessible_resources": [
     {
-      "resources": ["images/fillbot.png"],
+      "resources": ["images/fillbot.png", "images/logo.png" ],
       "matches": [ "https://*/*" ]
 
     }
