@@ -116,7 +116,7 @@
 .x_button {
     position: absolute;
     border-radius: 10px;
-    background-color: rgb(253, 253, 253);
+    background-color: inherit;
     color: rgb(0, 0, 0);
     justify-content: center;
     padding: 1vw;
@@ -130,6 +130,26 @@
     border: none;
     cursor: pointer;
     left: -10%;
+    top: -5%;
+}
+
+.settings_button{
+    position: absolute;
+    border-radius: 10px;
+    background-color: inherit;
+    color: rgb(0, 0, 0);
+    justify-content: center;
+    padding: 1vw;
+    font-size: 2vw;
+    transition: .1s;
+    width: 20%;
+    height: 2vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    right: -10%;
     top: -5%;
 }
 
@@ -189,4 +209,71 @@
     font-size: 1.5vw;
     /* border: 3px solid black; */
 
+}
+.page_fill_button {
+    position: relative;
+    background-color: rgba(255, 255, 255, 0);
+    right: 10%;
+    /* margin: .5vw; */
+    /* width: 100%; */
+    /* top: 5%; */
+
+    height: 100%;
+    border-radius: 5px;
+    transition: 2s;
+    padding:0;
+    border: none;
+    padding-top: .25vw;
+
+}
+
+.page_fill_button:hover {
+    position: relative;
+    background-color: rgba(255, 255, 255, 0);
+    padding-top: .25vw;
+    right: 10%;
+    height: 100%;
+    border-radius: 5px;
+    transition: 2s;
+    padding:0;
+
+}
+
+.page_fill_button_logo{
+    position: relative;
+    padding:0;
+    margin: 0;
+    font-size: inherit;
+    width: 2.5vw;
+    height: 2.5vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    cursor: pointer;
+}
+
+
+.page_fill_button_logo_inline{
+    position: relative;
+    padding:0;
+    margin: 0;
+    width: 2.3vw;
+    height: 2.3vw;
+    top: 20%;
+    /* height: 30%;
+    top: 35%;
+    width: auto; */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    cursor: pointer;
+}
+
+
+
+
+.response_prompt{
+    font-size: 1.8vw;
+    transition: 2s;
+    color: black;
 }
