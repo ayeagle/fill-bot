@@ -13,6 +13,8 @@
     overflow-x: hidden;
     font-family: Helvetica Neue, sans-serif;
     font-size: 1.5vw;
+    font-weight: 400;
+    font-style: normal;
     overscroll-behavior: none;
     height: 0px;
     width: 0px;
@@ -185,8 +187,9 @@
     color: rgb(0, 0, 0);
     justify-content: center;
     margin: 0 auto;
-    padding: 1vw;
-    /* font-size: 1.5vw; */
+    padding: .1vw;
+    margin: .5vw;
+    font-size: 1.5vw;
     transition: .1s;
 }
 
@@ -197,7 +200,7 @@
     color: rgb(0, 0, 0);
     opacity: 80%;
     transition: 1s;
-    padding: 1vw;
+    /* padding: 1vw; */
     /* font-size: 1.5vw; */
 }
 
@@ -207,9 +210,9 @@
     background-color: rgb(253, 253, 253);
     color: rgb(0, 0, 0);
     justify-content: center;
-    margin: 0 auto;
-    padding: 1vw;
-    /* font-size: 1.5vw; */
+    padding: .1vw;
+    margin: .5vw;
+    font-size: 1.5vw;
     transition: .1s;
 }
 
@@ -295,4 +298,36 @@
     font-size: 1.8vw;
     transition: 2s;
     color: black;
+}
+
+.domain_container{
+    border: 1px solid black;
+    overflow-y: scroll;
+    max-height: 15vw;
+    padding: .5vw;
+
+}
+
+
+.domain_unit_container{
+    max-height: 3vw;
+    position: relative;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    border-bottom: 1px solid black;
+    /* margin: .5vw; */
+    font-size: 1.2vw;
+    padding: 0;
+    
+}
+
+
+.domain_untis{
+    display: flex;
+    position: relative;
+    margin: .5vw;
+    padding: .5vw;
+    font-size: 1.2vw;
 }

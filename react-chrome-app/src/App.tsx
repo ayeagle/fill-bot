@@ -27,6 +27,8 @@ let blockedDomains: Array<string> = [];
 
 let secSubVal: any;
 
+
+let temp: any;
 //still need to actually write the permanent array
 //somewhere that is... permanent lol
 
@@ -48,6 +50,9 @@ function App() {
   const [settingsOpen, setSettingsOpen] = useState(false)
 
   const [promptWarn, setPromptWarn] = useState(false)
+  const [editBlockedDomains, setEditBlockedDomains] = useState(false)
+  // const [editBDChecks, setEditBDChecks] = useState<boolean[]>([]);
+  const [editBDChecks, setEditBDChecks] = useState(Array(10).fill(true))
 
   useEffect(() => {
     if (promptWarn) setPromptWarn(false)
@@ -78,132 +83,80 @@ function App() {
   //add the ability to change your base email
   //fighure out some goddamned permanent storage lol
 
+
+  //////////////////////////////////////////
+  //////////////////////////////////////////
+  //////////////////////////////////////////
+  //////////////////////////////////////////
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(subVal)
+  }
+  //////////////////////////////////////////
+  //////////////////////////////////////////
+
+  const inputChecker = (checkVal: string, searchVal: string) => {
+    console.log("inputChecker");
+    return checkVal.toUpperCase().indexOf(searchVal.toUpperCase()) !== -1
+  }
+  //////////////////////////////////////////
+  //////////////////////////////////////////
+
+  const doesExist = (checkArray: any, value: any) => {
+    for (let i = 0; i < checkArray.length; i++) {
+      if (checkArray[i] === value) {
+        return true
+      }
+    }
+    return false
+  }
+  //////////////////////////////////////////
+  //////////////////////////////////////////
+
   useEffect(() => {
+    setInterval(() => {
+      setWaiter(true)
+      // fill()
+    }, 100);
+  }, [waiter])
+  //////////////////////////////////////////
+  //////////////////////////////////////////
 
+  const validEmailCheck = (email: string) => {
+    console.log("validEmailCheck");
+    const checker = (val: string) => {
+      return email.toUpperCase().indexOf(val)
+    }
+    if (checker("@") === -1 || (checker("@GMAIL.COM") === -1 && checker("@YAHOO.COM") === -1 && checker("@HOTMAIL.COM") === -1)) {
+      setResponsePrompt("invalid email")
+      setPromptWarn(true)
+      return false
+    }
+    chrome.runtime.sendMessage({ type: 'setEmail', email: tempEmail });
+    return true
+  }
+  //////////////////////////////////////////
+  //////////////////////////////////////////
 
-    //check if the blocked domains exists
-    //check if the blocked domains exists
-    //check if the blocked domains exists
-    //check if the blocked domains exists
-    //check if the blocked domains exists
-    //check if the blocked domains exists
-    //check if the blocked domains exists
-    //check if the blocked domains exists
-
-
-    chrome.runtime.sendMessage({ type: 'setDBVals' }, (response: any) => {
-      blockedDomains = response.blockedDomains
-      usedEmails = response.usedEmails
-    });
-
-
-    if (domainElements.length === 2) {
-      normalName = domainElements[0];
-    } else if (domainElements.length > 2) {
-      normalName = domainElements[1];
+  const registerEmail = () => {
+    console.log("registerEmail");
+    let emailVal: string;
+    if (tempEmail === '') {
+      emailVal = email
     } else {
-      normalName = "We couldn't find a name :("
+      emailVal = tempEmail
     }
-
-    allInputs = (Array.from(document.querySelectorAll('input')))
-
-    chrome.runtime.sendMessage({ type: 'getLogo' }, (response: any) => {
-      ///////////////////////////////
-      console.log(response)
-      img = response.img
-      logo = response.logo
-    })
-
-    if (waiter) {
-      console.log("waiter");
-
-
-      chrome.runtime.sendMessage({ type: 'getEmail' }, (response: any) => {
-
-        // console.log(response)
-        if (response.email !== '') {
-          //console.log("first if was invoked")
-          configEmailDetails(response.email)
-        } else {
-          //console.log("second if was invoked")
-          setEmailOnFile(false)
-        }
-      })
-
-      pageContainsEmailFields(allInputs)
+    if (validEmailCheck(emailVal)) {
+      configEmailDetails(emailVal)
+      setSettingsOpen(false)
     }
-    // fill()
-  }, [window.location.href, waiter])
-
-
-  const configEmailDetails = (email: string) => {
-    console.log("configEmailDetails");
-    setSubVal(`${email.substring(0, email.toUpperCase().indexOf("@"))}+${normalName}${email.substring(email.toUpperCase().indexOf("@"), email.length)}`)
-    secSubVal = `${email.substring(0, email.toUpperCase().indexOf("@"))}+${normalName}${email.substring(email.toUpperCase().indexOf("@"), email.length)}`
-    // //console.log("///////////////////////////")
-    setEmail(email)
-
-    setEmailOnFile(true)
-    setEmailFront(email.substring(0, email.toUpperCase().indexOf("@")))
-    // //console.log(email.substring(0, email.toUpperCase().indexOf("@")))
-    // //console.log(normalName)
-
-    setEmailBack(email.substring(email.toUpperCase().indexOf("@"), email.length))
-    // //console.log(email.substring(email.toUpperCase().indexOf("@"), email.length))
-
-    // //console.log(`${emailFront}+${normalName}${emailBack}`)
-    //console.log("///////////////////////////")
   }
-
-  // const executeFill = (subVal: any) => {
-  //   console.log("executeFill");
-
-  //   fill(subVal)
-  // }
-
-  const execPageContainsEmailFields = (input: any) => {
-    console.log("execPageContainsEmailFields");
-
-
-    setEmailOnPage(true)
-    input.value = subVal
-    allEmailInputs.push(input)
-
-    console.log("SUBVAL WHEN COMPONENT IS GENERATED")
-    console.log(subVal)
-
-    console.log(secSubVal)
-
-    // Create the visual element (e.g., a button)
-    var page_fill_button = document.createElement("button");
-    // page_fill_button.innerHTML = "Go!";
-    page_fill_button.classList.add(styles.page_fill_button)
-    page_fill_button.addEventListener("click", function (event) {
-      fill(subVal)
-      event.preventDefault(); //this works for links
-      event.stopPropagation(); //this does not work
-    });
-
-    var page_fill_button_logo = document.createElement("img");
-    page_fill_button_logo.src = logo
-    page_fill_button_logo.classList.add(styles.page_fill_button_logo)
-
-    page_fill_button.appendChild(page_fill_button_logo);
-
-    // Add the button to the input field
-    if (input.parentNode) {
-      // Add the button to the input field
-      input.parentNode.insertBefore(page_fill_button, input.nextSibling);
-    }
-
-  }
+  //////////////////////////////////////////
+  //////////////////////////////////////////
 
   const pageContainsEmailFields = (inputsArray: Array<any>) => {
     console.log("pageContainsEmailFields");
-
-
     inputsArray.forEach((input, index) => {
-      // if input.name or placeholder AND type == text
       if (
         (
           inputChecker(input.name, 'EMAIL')
@@ -219,42 +172,115 @@ function App() {
           }
         } else {
           execPageContainsEmailFields(input)
-          // return true
         }
       }
-      // return false
     })
-    //console.log("this is the all email inputs object")
-    //console.log(allEmailInputs)
   };
+  //////////////////////////////////////////
+  //////////////////////////////////////////
 
+  const execPageContainsEmailFields = (input: any) => {
+    console.log("execPageContainsEmailFields");
+    setEmailOnPage(true)
+    input.value = subVal
+    allEmailInputs.push(input)
+    console.log("SUBVAL WHEN COMPONENT IS GENERATED")
+    console.log(subVal)
+    console.log(secSubVal)
+    var page_fill_button = document.createElement("button");
+    page_fill_button.classList.add(styles.page_fill_button)
+    page_fill_button.addEventListener("click", function (event) {
+      fill(subVal)
+      event.preventDefault(); //this works for links
+      event.stopPropagation(); //this does not work
+    });
 
+    var page_fill_button_logo = document.createElement("img");
+    page_fill_button_logo.src = logo
+    page_fill_button_logo.classList.add(styles.page_fill_button_logo)
 
-  const inputChecker = (checkVal: string, searchVal: string) => {
-    console.log("inputChecker");
+    page_fill_button.appendChild(page_fill_button_logo);
 
-    return checkVal.toUpperCase().indexOf(searchVal.toUpperCase()) !== -1
+    if (input.parentNode) {
+      input.parentNode.insertBefore(page_fill_button, input.nextSibling);
+    }
   }
+  //////////////////////////////////////////
+  //////////////////////////////////////////
 
+  const configEmailDetails = (email: string) => {
+    console.log("configEmailDetails");
+    setSubVal(`${email.substring(0, email.toUpperCase().indexOf("@"))}+${normalName}${email.substring(email.toUpperCase().indexOf("@"), email.length)}`)
+    // secSubVal = `${email.substring(0, email.toUpperCase().indexOf("@"))}+${normalName}${email.substring(email.toUpperCase().indexOf("@"), email.length)}`
+    setEmail(email)
+    setEmailOnFile(true)
+    setEmailFront(email.substring(0, email.toUpperCase().indexOf("@")))
+    setEmailBack(email.substring(email.toUpperCase().indexOf("@"), email.length))
+  }
+  //////////////////////////////////////////
+  //////////////////////////////////////////
+  //////////////////////////////////////////
+  //////////////////////////////////////////
+
+
+  useEffect(() => {
+
+    //check if the blocked domains exists
+    //check if the blocked domains exists
+
+
+    chrome.runtime.sendMessage({ type: 'setDBVals' }, (response: any) => {
+      blockedDomains = response.blockedDomains
+      usedEmails = response.usedEmails
+    });
+
+    if (doesExist(blockedDomains, normalName)) {
+      setDismiss(true)
+      return
+    }
+
+    if (domainElements.length === 2) {
+      normalName = domainElements[0];
+    } else if (domainElements.length > 2) {
+      normalName = domainElements[1];
+    } else {
+      normalName = "We couldn't find a name :("
+    }
+
+    allInputs = (Array.from(document.querySelectorAll('input')))
+
+    chrome.runtime.sendMessage({ type: 'getLogo' }, (response: any) => {
+      console.log(response)
+      img = response.img
+      logo = response.logo
+    })
+
+    if (waiter) {
+      console.log("waiter");
+      chrome.runtime.sendMessage({ type: 'getEmail' }, (response: any) => {
+        // console.log(response)
+        if (response.email !== '') {
+          //console.log("first if was invoked")
+          configEmailDetails(response.email)
+        } else {
+          //console.log("second if was invoked")
+          setEmailOnFile(false)
+        }
+      })
+      pageContainsEmailFields(allInputs)
+    }
+  }, [window.location.href, waiter])
+
+
+  //////////////////////////////////////////
+  //////////////////////////////////////////
+  //////////////////////////////////////////
+  //////////////////////////////////////////
 
   async function fill(subVal: any) {
     console.log("fill");
 
-    let exists = false;
-
-    console.log("this is the subval in the fill function")
-    console.log(subVal)
-
-    for (let i = 0; i < usedEmails.length; i++) {
-      //console.log("this is the value of i: " + i)
-      //console.log(usedEmails[i])
-      if (usedEmails[i] === subVal) {
-        exists = true
-        break
-      }
-    }
-
-    if (!exists) {
+    if (!doesExist(usedEmails, subVal)) {
       chrome.runtime.sendMessage({ type: 'addUsedEmail', usedEmail: subVal }, (response: any) => {
         usedEmails = response.usedEmails
       });
@@ -289,26 +315,15 @@ function App() {
     setDismiss(true)
   }
 
-  useEffect(() => {
-    setInterval(() => {
-      setWaiter(true)
-      // fill()
-    }, 2000);
-  }, [waiter])
+  //////////////////////////////////////////
+  //////////////////////////////////////////
+  //////////////////////////////////////////
+  //////////////////////////////////////////
 
   const block = () => {
 
-    let exists = false;
-
-    for (let i = 0; i < blockedDomains.length; i++) {
-      if (blockedDomains[i] === normalName) {
-        exists = true
-        break
-      }
-    }
-
-    if (!exists) {
-      chrome.runtime.sendMessage({ type: 'addBlockedDomains', blockedDomains: blockedDomains }, (response: any) => {
+    if (!doesExist(blockedDomains, normalName)) {
+      chrome.runtime.sendMessage({ type: 'addBlockedDomains', blockedDomains: normalName }, (response: any) => {
         blockedDomains = response.blockedDomains
       });
     }
@@ -316,59 +331,29 @@ function App() {
     console.log("this domain has been blocked")
     console.log(blockedDomains)
 
-  }
-
-
-
-
-  const validEmailCheck = (email: string) => {
-    console.log("validEmailCheck");
-
-    const checker = (val: string) => {
-      return email.toUpperCase().indexOf(val)
-    }
-
-    if (checker("@") === -1
-      || (
-        checker("@GMAIL.COM") === -1
-        && checker("@YAHOO.COM") === -1
-        && checker("@HOTMAIL.COM") === -1
-      )
-    ) {
-      setResponsePrompt("invalid email")
-      setPromptWarn(true)
-      return false
-    }
-
-    chrome.runtime.sendMessage({ type: 'setEmail', email: tempEmail });
-
-    return true
-
+    setDismiss(true)
 
   }
 
-  const registerEmail = () => {
-    console.log("registerEmail");
 
-    //console.log(tempEmail)
-    let emailVal: string;
-
-    if (tempEmail === '') {
-      emailVal = email
-    } else {
-      emailVal = tempEmail
+  //////////////////////////////////////////
+  //////////////////////////////////////////
+  const settingsButton = () => {
+    if (settingsOpen) {
+      setResponsePrompt('')
     }
-    if (validEmailCheck(emailVal)) {
-      configEmailDetails(emailVal)
-      setSettingsOpen(false)
-    }
+    setSettingsOpen(!settingsOpen)
   }
 
-  // //console.log(email)
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(subVal)
+  const saveBlockedDomains = () => {
+    // if (settingsOpen) {
+    //   setResponsePrompt('')
+    // }
+    // setSettingsOpen(!settingsOpen)
   }
+  //////////////////////////////////////////
+  //////////////////////////////////////////
+
 
 
   return (
@@ -378,44 +363,90 @@ function App() {
         <div className={styles.container}>
           <button className={styles.x_button} onClick={() => setDismiss(!dismiss)}> <FontAwesomeIcon icon={faXmark} /></button>
           <img className={styles.image_container} src={img} />
-          <button className={styles.settings_button} onClick={() => setSettingsOpen(!settingsOpen)}> <FontAwesomeIcon icon={faGear} /></button>
+          <button className={styles.settings_button} onClick={settingsButton}> <FontAwesomeIcon icon={faGear} /></button>
 
           <br></br>
 
           {emailOnFile ? (
 
-
-
-
             settingsOpen ? (
-              <div className={styles.container}>
-                <div style={{ fontSize: "1.7vw", position: "relative" }} >Settings</div>
-                <br></br>
 
-                <div style={{ fontSize: "1.3vw", position: "relative" }} >Change base email?</div>
-                <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-around", borderBottom: "1px solid black" }}>
+              editBlockedDomains ? (
+                <div>
+                  <div style={{ fontSize: "1.5vw" }}>Blocked Domains</div>
 
-                  <input className={styles.example}
-                    id='no_fill_email_input'
-                    placeholder={email}
-                    onChange={(e) => {
-                      setTempEmail(e.target.value)
-                    }}
-                    onKeyDown={event => {
-                      if (event.key === 'Enter') {
-                        registerEmail()
-                      }
-                    }}
-                  />
+                  <div className={styles.domain_container}>
+                    {blockedDomains.map((domain, index) => {
+                      // const temp = editBDChecks
+                      // temp[index] = true
+                      // // setEditBDChecks(temp)  
+
+                      console.log("the domain render is going")
+
+                      return (
+                        <div className={styles.domain_unit_container}>
+                          <input
+                            type="checkbox"
+                            defaultChecked={true}
+                            className={styles.domain_units}
+
+                            onChange={(e) => {
+                              console.log("the onchange is going")
+                              let temp = editBDChecks
+                              console.log(temp)
+                              console.log(temp[index])
+                              console.log(editBDChecks)
+                              console.log(editBDChecks[index])
+                              temp[index] = !temp[index]
+                              setEditBDChecks(temp)
+                            }}
+                          />
+                          <div className={styles.domain_units}>{domain}</div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                  <br />
+                  <button className={styles.fill_button} onClick={saveBlockedDomains}>Save Changes</button>
                 </div>
-                <br></br>
-                <div className={styles.response_prompt} style={{ color: promptWarn ? "red" : "black", transition: promptWarn ? "0s" : "2s" }}>{responsePrompt}</div>
-                <br></br>
-                <button className={styles.fill_button} onClick={registerEmail}>Save Changes</button>
-
-              </div>
 
 
+
+
+
+              ) : (
+                <div className={styles.container}>
+                  <div style={{ fontSize: "1.7vw", position: "relative" }} >Settings</div>
+                  <br></br>
+
+                  <div style={{ fontSize: "1.3vw", position: "relative" }} >Change base email?</div>
+                  <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-around", borderBottom: "1px solid black" }}>
+
+                    <input className={styles.example}
+                      id='no_fill_email_input'
+                      placeholder={email}
+                      onChange={(e) => {
+                        setTempEmail(e.target.value)
+                      }}
+                      onKeyDown={event => {
+                        if (event.key === 'Enter') {
+                          registerEmail()
+                        }
+                      }}
+                    />
+
+
+                  </div>
+                  <br></br>
+                  <div className={styles.response_prompt} style={{ color: promptWarn ? "red" : "black", transition: promptWarn ? "0s" : "2s" }}>{responsePrompt}</div>
+                  <button className={styles.fill_button} onClick={() => setEditBlockedDomains(true)}>Manage Domains</button>
+
+                  <br></br>
+                  <button className={styles.fill_button} onClick={registerEmail}>Save Changes</button>
+
+                </div>
+
+              )
 
 
             ) : (

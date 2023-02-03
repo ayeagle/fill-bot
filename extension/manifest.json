@@ -1,5 +1,5 @@
 {
-  "name": "React Chrome Extension",
+  "name": "Flytrap",
   "version": "1.0.0",
   "manifest_version": 3,
   "content_scripts": [
@@ -17,13 +17,21 @@
   },
   "permissions": [
     "storage"
-    ],
+  ],
   "web_accessible_resources": [
     {
-      "resources": ["images/fillbot.png", "images/logo.png" ],
-      "matches": [ "https://*/*" ]
-
+      "resources": [
+        "images/fillbot.png",
+        "images/logo.png"
+      ],
+      "matches": [
+        "https://*/*"
+      ]
     }
-  ]
-
+  ],
+  "icons": {
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "description": "App for tracking and sorting unique email signups"
 }
