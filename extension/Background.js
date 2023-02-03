@@ -2,6 +2,7 @@
 
 let baseEmail = ''
 let usedEmails = [];
+let blockedDomains = [];
 
 
 const printStorage = () => {
@@ -44,6 +45,25 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
             console.log("this is usedEmails value locally in the background")
             console.log(usedEmails)
         })
+
+        chrome.storage.sync.get(["blockedDomains"], (result) => {
+            // console.log("this is the usedemails sync get")
+            // console.log(result)
+            // console.log(result.usedEmails)
+            // console.log(result.usedEmails[0])
+            if (result.blockedDomains[0]) {
+                blockedDomains = result.blockedDomains
+            }
+            else {
+                chrome.storage.local.get(["email"], (result) => {
+                    if (result.blockedDomains[0]) {
+                        blockedDomains = result.blockedDomains
+                    }
+                })
+            }
+            console.log("this is usedEmails value locally in the background")
+            console.log(usedEmails)
+        })
         
         
         
@@ -68,7 +88,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
             console.log(baseEmail)
         })
 
-        sendResponse({ usedEmails: usedEmails })
+        sendResponse({ usedEmails: usedEmails, blockedDomains: blockedDomains })
 
     }
 })
@@ -78,6 +98,8 @@ const deleteRecords = () => {
     chrome.storage.sync.set({ 'email': '' })
     chrome.storage.local.set({ 'usedEmails': []})
     chrome.storage.sync.set({ 'usedEmails': [] })
+    chrome.storage.local.set({ 'blockedDomains': []})
+    chrome.storage.sync.set({ 'blockedDomains': [] })
 }
 
 // deleteRecords()
@@ -130,6 +152,37 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         printStorage()
 
         sendResponse({ usedEmails: usedEmails })
+
+    }
+})
+
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    if (request.type === "getBlockedDomains") {
+        console.log("THE gET BLOCKED DOMAINS METHOD WAS INVOKED")
+        sendResponse({ usedEmails: usedEmails })
+
+        printStorage()
+    }
+})
+
+
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    if (request.type === "addBlockedDomains") {
+        console.log("THE SET BLOCKED DOMAINS METHOD WAS INVOKED")
+
+        blockedDomains.push(request.blockedDomains)
+
+        if( blockedDomains.length >= 2){
+            blockedDomains = []
+        }
+
+        chrome.storage.local.set({ 'blockedDomains': blockedDomains })
+        chrome.storage.sync.set({ 'blockedDomains': blockedDomains })
+
+
+        printStorage()
+
+        sendResponse({ blockedDomains: blockedDomains })
 
     }
 })

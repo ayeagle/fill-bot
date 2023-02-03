@@ -180,36 +180,55 @@
 
 .fill_button {
     position: relative;
-
     border-radius: 10px;
     background-color: rgb(253, 253, 253);
     color: rgb(0, 0, 0);
     justify-content: center;
-    /* transition: .1s; */
-    /* width: 60%; */
-    /* left: 15%; */
+    margin: 0 auto;
     padding: 1vw;
-    font-size: 1.5vw;
+    /* font-size: 1.5vw; */
     transition: .1s;
 }
 
 .fill_button:hover {
     position: relative;
-
     border-radius: 10px;
-    background-color: rgb(84, 183, 71);
+    background-color: rgb(103, 185, 92);
     color: rgb(0, 0, 0);
     opacity: 80%;
-    /* transition: .1s; */
-    /* width: 60%;
-    left: 15%; */
     transition: 1s;
-
     padding: 1vw;
-    font-size: 1.5vw;
-    /* border: 3px solid black; */
-
+    /* font-size: 1.5vw; */
 }
+
+.block_button {
+    position: relative;
+    border-radius: 10px;
+    background-color: rgb(253, 253, 253);
+    color: rgb(0, 0, 0);
+    justify-content: center;
+    margin: 0 auto;
+    padding: 1vw;
+    /* font-size: 1.5vw; */
+    transition: .1s;
+}
+
+.block_button:hover {
+    position: relative;
+    border-radius: 10px;
+    background-color: rgb(185, 93, 93);
+    color: rgb(0, 0, 0);
+    opacity: 80%;
+    transition: 1s;
+    padding: 1vw;
+    /* font-size: 1.5vw; */
+}
+
+
+
+
+
+
 .page_fill_button {
     position: relative;
     background-color: rgba(255, 255, 255, 0);

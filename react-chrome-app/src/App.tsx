@@ -22,6 +22,10 @@ let allInputs: any;
 let allEmailInputs: HTMLInputElement[] = [];
 
 let usedEmails: Array<string> = [];
+let blockedDomains: Array<string> = [];
+
+
+let secSubVal: any;
 
 //still need to actually write the permanent array
 //somewhere that is... permanent lol
@@ -30,6 +34,7 @@ let usedEmails: Array<string> = [];
 function App() {
 
   const domainElements = location.hostname.split(".");
+
   const [emailOnPage, setEmailOnPage] = useState(false);
   const [emailOnFile, setEmailOnFile] = useState(true)
   const [email, setEmail] = useState('')
@@ -53,6 +58,8 @@ function App() {
   //console.log(usedEmails)
 
 
+  //block on this domain
+
   //everytime that someone uses the fill function, add it to a local storage value
   //so that they can search on it in their inbox
   //option to autoblock anything that is sent to that specific domain
@@ -60,11 +67,6 @@ function App() {
 
   //options for do not show absolute positioned menu
   //options for do not show logo piece button
-
-
-  //NEED TO IMPLEMENT A USEEFFECT TO GRAB THE EMAIL DETAILS ON PAGE LOAD
-  //BECAUSE RIGHT NOW THE EMAIL IS ONLY POPULATED CORRECTLY IF YOU
-  //ENTER IT ON THAT EXACT PAGE LOAD, BUT NOT IN BETWEENs
 
 
   //add logic to not fire if there is also a password form on the page
@@ -78,7 +80,19 @@ function App() {
 
   useEffect(() => {
 
+
+    //check if the blocked domains exists
+    //check if the blocked domains exists
+    //check if the blocked domains exists
+    //check if the blocked domains exists
+    //check if the blocked domains exists
+    //check if the blocked domains exists
+    //check if the blocked domains exists
+    //check if the blocked domains exists
+
+
     chrome.runtime.sendMessage({ type: 'setDBVals' }, (response: any) => {
+      blockedDomains = response.blockedDomains
       usedEmails = response.usedEmails
     });
 
@@ -94,14 +108,18 @@ function App() {
     allInputs = (Array.from(document.querySelectorAll('input')))
 
     chrome.runtime.sendMessage({ type: 'getLogo' }, (response: any) => {
+      ///////////////////////////////
       console.log(response)
       img = response.img
       logo = response.logo
     })
 
     if (waiter) {
+      console.log("waiter");
+
 
       chrome.runtime.sendMessage({ type: 'getEmail' }, (response: any) => {
+
         // console.log(response)
         if (response.email !== '') {
           //console.log("first if was invoked")
@@ -119,6 +137,9 @@ function App() {
 
 
   const configEmailDetails = (email: string) => {
+    console.log("configEmailDetails");
+    setSubVal(`${email.substring(0, email.toUpperCase().indexOf("@"))}+${normalName}${email.substring(email.toUpperCase().indexOf("@"), email.length)}`)
+    secSubVal = `${email.substring(0, email.toUpperCase().indexOf("@"))}+${normalName}${email.substring(email.toUpperCase().indexOf("@"), email.length)}`
     // //console.log("///////////////////////////")
     setEmail(email)
 
@@ -130,27 +151,35 @@ function App() {
     setEmailBack(email.substring(email.toUpperCase().indexOf("@"), email.length))
     // //console.log(email.substring(email.toUpperCase().indexOf("@"), email.length))
 
-    setSubVal(`${email.substring(0, email.toUpperCase().indexOf("@"))}+${normalName}${email.substring(email.toUpperCase().indexOf("@"), email.length)}`)
     // //console.log(`${emailFront}+${normalName}${emailBack}`)
     //console.log("///////////////////////////")
   }
 
-  const executeFill = () => {
-    fill()
-  }
+  // const executeFill = (subVal: any) => {
+  //   console.log("executeFill");
+
+  //   fill(subVal)
+  // }
 
   const execPageContainsEmailFields = (input: any) => {
+    console.log("execPageContainsEmailFields");
+
 
     setEmailOnPage(true)
     input.value = subVal
     allEmailInputs.push(input)
+
+    console.log("SUBVAL WHEN COMPONENT IS GENERATED")
+    console.log(subVal)
+
+    console.log(secSubVal)
 
     // Create the visual element (e.g., a button)
     var page_fill_button = document.createElement("button");
     // page_fill_button.innerHTML = "Go!";
     page_fill_button.classList.add(styles.page_fill_button)
     page_fill_button.addEventListener("click", function (event) {
-      executeFill()
+      fill(subVal)
       event.preventDefault(); //this works for links
       event.stopPropagation(); //this does not work
     });
@@ -170,6 +199,8 @@ function App() {
   }
 
   const pageContainsEmailFields = (inputsArray: Array<any>) => {
+    console.log("pageContainsEmailFields");
+
 
     inputsArray.forEach((input, index) => {
       // if input.name or placeholder AND type == text
@@ -200,11 +231,15 @@ function App() {
 
 
   const inputChecker = (checkVal: string, searchVal: string) => {
+    console.log("inputChecker");
+
     return checkVal.toUpperCase().indexOf(searchVal.toUpperCase()) !== -1
   }
 
 
-  async function fill() {
+  async function fill(subVal: any) {
+    console.log("fill");
+
     let exists = false;
 
     console.log("this is the subval in the fill function")
@@ -247,7 +282,7 @@ function App() {
     const inputElements = document.querySelectorAll('input');
     inputElements.forEach(input => {
       if ((inputChecker(input.name, 'EMAIL') || inputChecker(input.placeholder, 'EMAIL') || inputChecker(input.type, 'EMAIL')) && input.id !== 'no_fill_email_input') {
-        setEmailOnPage(true)
+        // setEmailOnPage(true)
         input.value = subVal
       }
     });
@@ -261,12 +296,34 @@ function App() {
     }, 2000);
   }, [waiter])
 
+  const block = () => {
 
+    let exists = false;
+
+    for (let i = 0; i < blockedDomains.length; i++) {
+      if (blockedDomains[i] === normalName) {
+        exists = true
+        break
+      }
+    }
+
+    if (!exists) {
+      chrome.runtime.sendMessage({ type: 'addBlockedDomains', blockedDomains: blockedDomains }, (response: any) => {
+        blockedDomains = response.blockedDomains
+      });
+    }
+
+    console.log("this domain has been blocked")
+    console.log(blockedDomains)
+
+  }
 
 
 
 
   const validEmailCheck = (email: string) => {
+    console.log("validEmailCheck");
+
     const checker = (val: string) => {
       return email.toUpperCase().indexOf(val)
     }
@@ -291,6 +348,8 @@ function App() {
   }
 
   const registerEmail = () => {
+    console.log("registerEmail");
+
     //console.log(tempEmail)
     let emailVal: string;
 
@@ -390,8 +449,12 @@ function App() {
                 </div>
 
                 <br></br>
+                <div style={{ fontSize: "1vw", position: "relative", display: "flex", flexDirection: "row", justifyContent: "center", margin: ".5vw" }}>
 
-                <button className={styles.fill_button} onClick={fill}>Fill away!</button>
+                  <button className={styles.fill_button} onClick={fill}>Fill away!</button>
+                  <button className={styles.block_button} onClick={block}>Don't show again</button>
+                </div>
+
               </div>
             )
 
