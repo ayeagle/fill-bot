@@ -170,7 +170,6 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.type === "addBlockedDomains") {
         console.log("THE ADD BLOCKED DOMAINS METHOD WAS INVOKED")
 
-        blockedDomains.push(request.blockedDomains)
         console.log("domain to be blocked")
 
         console.log(request.blockedDomains)
@@ -179,10 +178,10 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
             blockedDomains = []
         }
 
-        chrome.storage.local.set({ 'blockedDomains': blockedDomains })
-        chrome.storage.sync.set({ 'blockedDomains': blockedDomains })
+        chrome.storage.local.set({ 'blockedDomains': request.blockedDomains })
+        chrome.storage.sync.set({ 'blockedDomains': request.blockedDomains })
         console.log("current full list of blocked domains")
-        console.log(blockedDomains)
+        console.log(request.blockedDomains)
 
 
         printStorage()

@@ -52,7 +52,7 @@ function App() {
   const [promptWarn, setPromptWarn] = useState(false)
   const [editBlockedDomains, setEditBlockedDomains] = useState(false)
   // const [editBDChecks, setEditBDChecks] = useState<boolean[]>([]);
-  const [editBDChecks, setEditBDChecks] = useState(Array(10).fill(true))
+  const [editBDChecks, setEditBDChecks] = useState(Array(10).fill(false))
 
   useEffect(() => {
     if (promptWarn) setPromptWarn(false)
@@ -62,27 +62,10 @@ function App() {
   //console.log("this bitch be the perma array")
   //console.log(usedEmails)
 
-
-  //block on this domain
-
-  //everytime that someone uses the fill function, add it to a local storage value
-  //so that they can search on it in their inbox
-  //option to autoblock anything that is sent to that specific domain
-
-
-  //options for do not show absolute positioned menu
   //options for do not show logo piece button
 
-
-  //add logic to not fire if there is also a password form on the page
-  //add the ability to hit "enter" to move forward
   // add animations for copied to clipboard
-  //
-
-  //add animations for the copy button
-  //add the ability to change your base email
-  //fighure out some goddamned permanent storage lol
-
+  //login stuff
 
   //////////////////////////////////////////
   //////////////////////////////////////////
@@ -322,8 +305,13 @@ function App() {
 
   const block = () => {
 
+    
+
     if (!doesExist(blockedDomains, normalName)) {
-      chrome.runtime.sendMessage({ type: 'addBlockedDomains', blockedDomains: normalName }, (response: any) => {
+
+      blockedDomains.push(normalName)
+
+      chrome.runtime.sendMessage({ type: 'addBlockedDomains', blockedDomains: blockedDomains }, (response: any) => {
         blockedDomains = response.blockedDomains
       });
     }
@@ -346,6 +334,34 @@ function App() {
   }
 
   const saveBlockedDomains = () => {
+    setEditBlockedDomains(false)
+
+    let temp: string[] = [];
+    console.log(editBDChecks)
+    console.log(blockedDomains)
+    console.log(blockedDomains.length)
+
+    for (let i = 0; i < blockedDomains.length; i++) {
+      if (!editBDChecks[i]) {
+        temp.push(blockedDomains[i])
+      }
+    }
+
+    console.log(temp)
+
+    blockedDomains = temp;
+
+    chrome.runtime.sendMessage({ type: 'addBlockedDomains', blockedDomains: blockedDomains }, (response: any) => {
+      blockedDomains = response.blockedDomains
+    });
+
+    // setEditBDChecks(temp)
+
+    //edit local domain list
+
+    //send new domain list back
+
+
     // if (settingsOpen) {
     //   setResponsePrompt('')
     // }
@@ -393,10 +409,10 @@ function App() {
                             onChange={(e) => {
                               console.log("the onchange is going")
                               let temp = editBDChecks
-                              console.log(temp)
-                              console.log(temp[index])
-                              console.log(editBDChecks)
-                              console.log(editBDChecks[index])
+                              // console.log(temp)
+                              // console.log(temp[index])
+                              // console.log(editBDChecks)
+                              // console.log(editBDChecks[index])
                               temp[index] = !temp[index]
                               setEditBDChecks(temp)
                             }}
