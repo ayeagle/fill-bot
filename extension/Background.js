@@ -159,7 +159,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.type === "getBlockedDomains") {
         console.log("THE gET BLOCKED DOMAINS METHOD WAS INVOKED")
-        sendResponse({ usedEmails: usedEmails })
+        sendResponse({ blockedDomains: blockedDomains })
 
         printStorage()
     }
@@ -168,16 +168,20 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.type === "addBlockedDomains") {
-        console.log("THE SET BLOCKED DOMAINS METHOD WAS INVOKED")
+        console.log("THE ADD BLOCKED DOMAINS METHOD WAS INVOKED")
 
-        blockedDomains.push(request.blockedDomains)
+        console.log("domain to be blocked")
 
-        if( blockedDomains.length >= 2){
+        console.log(request.blockedDomains)
+
+        if( blockedDomains.length >= 10){
             blockedDomains = []
         }
 
-        chrome.storage.local.set({ 'blockedDomains': blockedDomains })
-        chrome.storage.sync.set({ 'blockedDomains': blockedDomains })
+        chrome.storage.local.set({ 'blockedDomains': request.blockedDomains })
+        chrome.storage.sync.set({ 'blockedDomains': request.blockedDomains })
+        console.log("current full list of blocked domains")
+        console.log(request.blockedDomains)
 
 
         printStorage()
