@@ -33,5 +33,5 @@
     "48": "icon48.png",
     "128": "icon128.png"
   },
-  "description": "App for tracking and sorting unique email signups"
+  "description": "Fillbot can generate and autofill unique versions of your email based on the service you're signing up for. It can also help you manage your inbox and create automated workflows for mail sent to your unique signup addresses. "
 }
