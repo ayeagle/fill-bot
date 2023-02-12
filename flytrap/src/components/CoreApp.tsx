@@ -1,4 +1,4 @@
-import styles from './App.module.css'
+import styles from './CoreApp.module.css'
 import { useEffect, useState } from 'react';
 import * as icons from 'react-icons/fa';
 // import { isConditionalExpression } from 'typescript';
@@ -6,36 +6,31 @@ import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { faGear } from '@fortawesome/free-solid-svg-icons';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
+import AuthenticationButton from './AuthenticationButton';
+import { useLocation } from 'react-router-dom';
 
 let normalName: string;
-
 declare var window: any;
-
 const chrome = window.chrome;
-
 let logo: any;
 let img: any;
-
 let allInputs: any;
-
 let allEmailInputs: HTMLInputElement[] = [];
-
 let usedEmails: Array<string> = [];
 let blockedDomains: Array<string> = [];
-
-
 let secSubVal: any;
-
-
 let temp: any;
 //still need to actually write the permanent array
 //somewhere that is... permanent lol
 
+console.log("COREapp has loaded")
 
-function App() {
 
-  const domainElements = location.hostname.split(".");
+
+export default function CoreApp() {
+
+  const location = useLocation();
+  const domainElements = location.pathname.split(".");
 
   const [emailOnPage, setEmailOnPage] = useState(false);
   const [emailOnFile, setEmailOnFile] = useState(true)
@@ -378,6 +373,7 @@ function App() {
         {/* <header> */}
         <div className={styles.container}>
           <button className={styles.x_button} onClick={() => setDismiss(!dismiss)}> <FontAwesomeIcon icon={faXmark} /></button>
+          <AuthenticationButton/>
           <img className={styles.image_container} src={img} />
           <button className={styles.settings_button} onClick={settingsButton}> <FontAwesomeIcon icon={faGear} /></button>
 
@@ -538,14 +534,8 @@ function App() {
               <br></br>
               <button className={styles.fill_button} onClick={registerEmail}>Register main email</button>
             </div>)}
-
-
-
-
         </div>
       </div>
     </div>
   )
 }
-
-export default App

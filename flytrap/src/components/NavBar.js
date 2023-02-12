@@ -179,8 +179,8 @@
 
 import React from 'react';
 
-import MainNav from './main-nav';
-import AuthNav from './auth-nav';
+// import MainNav from './main-nav';
+import AuthNav from './AuthNav';
 
 const NavBar = () => {
   return (
@@ -188,7 +188,7 @@ const NavBar = () => {
       <nav className="navbar navbar-expand-md navbar-light bg-light">
         <div className="container">
           <div className="navbar-brand logo" />
-          <MainNav />
+          {/* <MainNav /> */}
           <AuthNav />
         </div>
       </nav>
