@@ -3,6 +3,7 @@
 let baseEmail = ''
 let usedEmails = [];
 let blockedDomains = [];
+let currentSubVal = ''
 
 
 const printStorage = () => {
@@ -121,6 +122,28 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
 
 chrome.runtime.onMessage.addListener(function (request) {
+    if (request.type === "setCurrentSubVal") {
+        console.log("THE SET SUBVAL METHOD WAS INVOKED")
+        chrome.storage.local.set({ 'currentSubVal': request.currentSubVal })
+        chrome.storage.sync.set({ 'currentSubVal': request.currentSubVal })
+        currentSubVal = request.currentSubVal;
+        printStorage()
+    }
+})
+
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    if (request.type === "getCurrentSubVal") {
+        console.log("THE GET SUBVAL METHOD WAS INVOKED")
+        console.log("THE GET SUBVAL METHOD WAS INVOKED")
+        console.log(currentSubVal)
+        printStorage()
+        sendResponse({ currentSubVal: currentSubVal });
+    }
+});
+
+
+
+chrome.runtime.onMessage.addListener(function (request) {
     if (request.type === "setEmail") {
         console.log("THE SET EMAIL METHOD WAS INVOKED")
         chrome.storage.local.set({ 'email': request.email })
@@ -133,7 +156,7 @@ chrome.runtime.onMessage.addListener(function (request) {
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.type === "getEmail") {
         console.log("THE GET EMAIL METHOD WAS INVOKED")
-        printStorage()
+        // printStorage()
         sendResponse({ email: baseEmail });
     }
 });

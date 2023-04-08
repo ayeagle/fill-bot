@@ -30,7 +30,7 @@ console.log("COREapp has loaded")
 export default function CoreApp() {
 
   const location = useLocation();
-  const domainElements = location.pathname.split(".");
+  const domainElements = window.location.href.split("//")[1].split(".")
 
   const [emailOnPage, setEmailOnPage] = useState(false);
   const [emailOnFile, setEmailOnFile] = useState(true)
@@ -95,7 +95,7 @@ export default function CoreApp() {
     setInterval(() => {
       setWaiter(true)
       // fill()
-    }, 100);
+    }, 500);
   }, [waiter])
   //////////////////////////////////////////
   //////////////////////////////////////////
@@ -157,7 +157,72 @@ export default function CoreApp() {
   //////////////////////////////////////////
   //////////////////////////////////////////
 
-  const execPageContainsEmailFields = (input: any) => {
+  async function fill(subby: any) {
+    console.log("fill");
+    console.log("fill");
+    console.log("fill");
+    console.log(subby)
+    console.log(subby)
+    console.log(subby)
+
+    if (!doesExist(usedEmails, subby)) {
+      chrome.runtime.sendMessage({ type: 'addUsedEmail', usedEmail: subby }, (response: any) => {
+        usedEmails = response.usedEmails
+      });
+    }
+
+    if (allEmailInputs.length > 0 && allEmailInputs[0] != null) {
+      const targetElement = document.getElementById(allEmailInputs[allEmailInputs.length-1].id);
+      if (targetElement != null) {
+        // targetElement.scrollIntoView();
+
+        const yOffset = -300; 
+        const y = targetElement.getBoundingClientRect().top + window.pageYOffset + yOffset;
+
+
+        console.log("Window scroll auditor")
+        console.log(targetElement)
+        console.log(targetElement.getBoundingClientRect())
+        console.log(targetElement.getBoundingClientRect().top)
+        console.log(window.pageYOffset)
+        console.log(yOffset)
+        console.log(y)
+        
+        window.scrollTo({top: y, behavior: 'smooth'});
+
+        const origBackgroundColor = targetElement.style.backgroundColor;
+        const origColor = targetElement.style.color;
+
+        targetElement.style.backgroundColor = 'rgb(76, 115, 255)';
+        targetElement.style.color = 'white';
+
+        setTimeout(() => {
+          targetElement.style.backgroundColor = origBackgroundColor;
+          targetElement.style.color = origColor;
+
+          targetElement.style.transition = '3s';
+        }, 1);
+      }
+    }
+
+    const inputElements = document.querySelectorAll('input');
+    inputElements.forEach(input => {
+      if ((inputChecker(input.name, 'EMAIL') || inputChecker(input.placeholder, 'EMAIL') || inputChecker(input.type, 'EMAIL')) && input.id !== 'no_fill_email_input') {
+        // setEmailOnPage(true)
+        input.value = subby
+      }
+    });
+    setDismiss(true)
+  }
+
+  //////////////////////////////////////////
+  //////////////////////////////////////////
+  //////////////////////////////////////////
+  //////////////////////////////////////////
+
+  
+
+  async function execPageContainsEmailFields (input: any) {
     console.log("execPageContainsEmailFields");
     setEmailOnPage(true)
     input.value = subVal
@@ -167,8 +232,24 @@ export default function CoreApp() {
     console.log(secSubVal)
     var page_fill_button = document.createElement("button");
     page_fill_button.classList.add(styles.page_fill_button)
-    page_fill_button.addEventListener("click", function (event) {
-      fill(subVal)
+
+    page_fill_button.addEventListener("click", async function (event) {
+    
+      let tempSubVal: any
+
+      chrome.runtime.sendMessage({ type: 'getCurrentSubVal'}, (response: any) => {
+
+        console.log("the async get email method was invoked")
+        console.log(response)
+        console.log(response.currentSubVal)
+
+        tempSubVal = response.currentSubVal
+
+        fill(tempSubVal)
+
+      })
+
+
       event.preventDefault(); //this works for links
       event.stopPropagation(); //this does not work
     });
@@ -188,13 +269,23 @@ export default function CoreApp() {
 
   const configEmailDetails = (email: string) => {
     console.log("configEmailDetails");
-    setSubVal(`${email.substring(0, email.toUpperCase().indexOf("@"))}+${normalName}${email.substring(email.toUpperCase().indexOf("@"), email.length)}`)
+
+    let temp = `${email.substring(0, email.toUpperCase().indexOf("@"))}+${normalName}${email.substring(email.toUpperCase().indexOf("@"), email.length)}`
+    setSubVal(temp)
     // secSubVal = `${email.substring(0, email.toUpperCase().indexOf("@"))}+${normalName}${email.substring(email.toUpperCase().indexOf("@"), email.length)}`
     setEmail(email)
     setEmailOnFile(true)
     setEmailFront(email.substring(0, email.toUpperCase().indexOf("@")))
     setEmailBack(email.substring(email.toUpperCase().indexOf("@"), email.length))
+
+    chrome.runtime.sendMessage({ type: 'setCurrentSubVal' , currentSubVal: temp}, (response: any) => {
+      console.log("this is the response from the set curr sub val!!!!")
+
+      console.log(response)
+    });
+
   }
+
   //////////////////////////////////////////
   //////////////////////////////////////////
   //////////////////////////////////////////
@@ -211,6 +302,13 @@ export default function CoreApp() {
       blockedDomains = response.blockedDomains
       usedEmails = response.usedEmails
     });
+
+    let simpleDomain = window.location.href.split("//")[2]
+
+
+
+    console.log("these are the domainelements")
+    console.log(domainElements)
 
     if (doesExist(blockedDomains, normalName)) {
       setDismiss(true)
@@ -255,48 +353,6 @@ export default function CoreApp() {
   //////////////////////////////////////////
   //////////////////////////////////////////
 
-  async function fill(subVal: any) {
-    console.log("fill");
-
-    if (!doesExist(usedEmails, subVal)) {
-      chrome.runtime.sendMessage({ type: 'addUsedEmail', usedEmail: subVal }, (response: any) => {
-        usedEmails = response.usedEmails
-      });
-    }
-
-    if (allEmailInputs.length > 0 && allEmailInputs[0] != null) {
-      const targetElement = document.getElementById(allEmailInputs[0].id);
-      if (targetElement != null) {
-        targetElement.scrollIntoView();
-        const origBackgroundColor = targetElement.style.backgroundColor;
-        const origColor = targetElement.style.color;
-
-        targetElement.style.backgroundColor = 'rgb(76, 115, 255)';
-        targetElement.style.color = 'white';
-
-        setTimeout(() => {
-          targetElement.style.backgroundColor = origBackgroundColor;
-          targetElement.style.color = origColor;
-
-          targetElement.style.transition = '3s';
-        }, 1);
-      }
-    }
-
-    const inputElements = document.querySelectorAll('input');
-    inputElements.forEach(input => {
-      if ((inputChecker(input.name, 'EMAIL') || inputChecker(input.placeholder, 'EMAIL') || inputChecker(input.type, 'EMAIL')) && input.id !== 'no_fill_email_input') {
-        // setEmailOnPage(true)
-        input.value = subVal
-      }
-    });
-    setDismiss(true)
-  }
-
-  //////////////////////////////////////////
-  //////////////////////////////////////////
-  //////////////////////////////////////////
-  //////////////////////////////////////////
 
   const block = () => {
 
@@ -373,11 +429,11 @@ export default function CoreApp() {
         {/* <header> */}
         <div className={styles.container}>
           <button className={styles.x_button} onClick={() => setDismiss(!dismiss)}> <FontAwesomeIcon icon={faXmark} /></button>
-          <AuthenticationButton/>
+          {/* <AuthenticationButton/> */}
           <img className={styles.image_container} src={img} />
           <button className={styles.settings_button} onClick={settingsButton}> <FontAwesomeIcon icon={faGear} /></button>
 
-          <br></br>
+          {/* <br></br> */}
 
           {emailOnFile ? (
 
@@ -418,7 +474,7 @@ export default function CoreApp() {
                       )
                     })}
                   </div>
-                  <br />
+                  {/* <br /> */}
                   <button className={styles.fill_button} onClick={saveBlockedDomains}>Save Changes</button>
                 </div>
 
@@ -429,10 +485,10 @@ export default function CoreApp() {
               ) : (
                 <div className={styles.container}>
                   <div style={{ fontSize: "1.7vw", position: "relative" }} >Settings</div>
-                  <br></br>
+                  {/* <br></br> */}
 
                   <div style={{ fontSize: "1.3vw", position: "relative" }} >Change base email?</div>
-                  <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-around", borderBottom: "1px solid black" }}>
+                  <div style={{ display: "flex", flexDirection: "row", borderBottom: "1px solid black" }}>
 
                     <input className={styles.example}
                       id='no_fill_email_input'
@@ -449,11 +505,11 @@ export default function CoreApp() {
 
 
                   </div>
-                  <br></br>
+                  {/* <br></br> */}
                   <div className={styles.response_prompt} style={{ color: promptWarn ? "red" : "black", transition: promptWarn ? "0s" : "2s" }}>{responsePrompt}</div>
                   <button className={styles.fill_button} onClick={() => setEditBlockedDomains(true)}>Manage Domains</button>
 
-                  <br></br>
+                  {/* <br></br> */}
                   <button className={styles.fill_button} onClick={registerEmail}>Save Changes</button>
 
                 </div>
@@ -471,7 +527,7 @@ export default function CoreApp() {
                 <br></br> */}
 
                 <div style={{ fontSize: "1.3vw", position: "relative" }} >Fill email forms?</div>
-                <div style={{ position: "relative", display: "flex", flexDirection: "row", justifyContent: "space-around", borderBottom: "1px solid black" }}>
+                <div style={{ position: "relative", display: "flex", flexDirection: "row", justifyContent: "space-around", height: "40px", borderBottom: "1px solid black" }}>
                   <div className={styles.example_fader} />
                   <input className={styles.example}
                     placeholder={subVal}
@@ -479,9 +535,9 @@ export default function CoreApp() {
 
                   <button className={styles.other_button} onClick={copyToClipboard}><icons.FaCopy /></button>
                 </div>
-                <br></br>
+                {/* <br></br> */}
 
-                <div style={{ position: "relative", display: "flex", flexDirection: "row", justifyContent: "center", width: "80%", left: "10%" }}>
+                {/* <div style={{ position: "relative", display: "flex", flexDirection: "row", justifyContent: "center", width: "80%", left: "10%" }}>
                   <div style={{ fontSize: "1.3vw" }} >
                     or hit the puzzle in the input to fill.
                   </div>
@@ -489,12 +545,12 @@ export default function CoreApp() {
 
                     <img className={styles.page_fill_button_logo_inline} src={logo} onClick={fill} />
                   </div>
-                </div>
+                </div> */}
 
-                <br></br>
+                {/* <br></br> */}
                 <div style={{ fontSize: "1vw", position: "relative", display: "flex", flexDirection: "row", justifyContent: "center", margin: ".5vw" }}>
 
-                  <button className={styles.fill_button} onClick={fill}>Fill away!</button>
+                  <button className={styles.fill_button} onClick={()=>fill(subVal)}>Fill away!</button>
                   <button className={styles.block_button} onClick={block}>Don't show again</button>
                 </div>
 
@@ -510,10 +566,10 @@ export default function CoreApp() {
 
             <div className={styles.container}>
               <div style={{ fontSize: "1.7vw", position: "relative" }} >Let's get you set up!</div>
-              <br></br>
+              {/* <br></br> */}
 
               <div style={{ fontSize: "1.3vw", position: "relative" }} >What email do you normally sign up with?</div>
-              <br></br>
+              {/* <br></br> */}
               <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-around", borderBottom: "1px solid black" }}>
 
                 <input className={styles.example}
@@ -529,9 +585,9 @@ export default function CoreApp() {
                   }}
                 />
               </div>
-              <br></br>
+              {/* <br></br> */}
               <div className={styles.response_prompt} style={{ color: promptWarn ? "red" : "black", transition: promptWarn ? "0s" : "2s" }}>{responsePrompt}</div>
-              <br></br>
+              {/* <br></br> */}
               <button className={styles.fill_button} onClick={registerEmail}>Register main email</button>
             </div>)}
         </div>

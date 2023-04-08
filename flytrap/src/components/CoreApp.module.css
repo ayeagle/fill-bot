@@ -93,11 +93,10 @@
 .example {
     font-size: 1.2vw;
     position: relative;
-    padding: 1vw;
     border: 0px;
     width: 100%;
     background-color: inherit;
-
+    
     /* border-bottom: 1px solid black; */
     justify-content: center;
     outline: none;
@@ -161,11 +160,11 @@
     background-color: rgb(253, 253, 253);
     color: rgb(0, 0, 0);
     justify-content: center;
-    padding: 1vw;
+    padding-left: 1vw;
     font-size: 2vw;
     transition: .1s;
     width: 20%;
-    height: 2vw;
+    height: 15px;
     border: none;
     z-index: 10;
     /* border-bottom: 1px solid black; */

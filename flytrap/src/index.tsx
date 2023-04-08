@@ -18,11 +18,11 @@ const globalStyles = document.createElement("style");
 globalStyles.innerHTML = `
   #${rootElement.id} {
   position: fixed;
-  right: 5vw;
   top: 0;
+  right: 5vw;
   width: 25%;
-  height: 40vh;
-  background: #ffffff;
+  height: auto;
+  background: transparent;
   z-index: 999999999;
   }
 `;
@@ -42,8 +42,8 @@ const root = ReactDOM.createRoot(rootElement);
 // );
 root.render(
     <Router>
-      <Auth0ProviderWithHistory>
+      {/* <Auth0ProviderWithHistory> */}
         <CoreApp />
-      </Auth0ProviderWithHistory>
+      {/* </Auth0ProviderWithHistory> */}
     </Router>
 );
