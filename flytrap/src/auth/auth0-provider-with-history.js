@@ -17,10 +17,10 @@ const Auth0ProviderWithHistory = ({ children }) => {
   return (
     <Auth0Provider
     domain="dev-r2zpy4nl1f3sy1k8.us.auth0.com"
-    clientId="iUpsgSmF90HWqhZCzl84oXmE1ID6occc"
+    clientId="ewTvhE2obV76Nkxv89NxX99OpQBTe9Fu"
     authorizationParams={{
       redirect_uri:
-        "https://flytrap.email/authorize"
+        "https://flytrap.email"
       // "http://localhost:3000/api/auth/callback"
       //  window.location.origin
     }}
