@@ -95,8 +95,8 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 })
 
 const deleteRecords = () => {
-    chrome.storage.local.set({ 'email': '' })
-    chrome.storage.sync.set({ 'email': '' })
+    // chrome.storage.local.set({ 'email': '' })
+    // chrome.storage.sync.set({ 'email': '' })
     chrome.storage.local.set({ 'usedEmails': []})
     chrome.storage.sync.set({ 'usedEmails': [] })
     chrome.storage.local.set({ 'blockedDomains': []})

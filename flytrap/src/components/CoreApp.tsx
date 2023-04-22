@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AuthenticationButton from "./AuthenticationButton";
 import { useLocation } from "react-router-dom";
 import { withAuthenticationRequired, useAuth0, User } from "@auth0/auth0-react";
+import EditBlockedDomains from "./EditBlockedDomains";
 
 let normalName: string;
 declare var window: any;
@@ -52,11 +53,13 @@ function CoreApp() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [token, setToken] = useState("");
   const [authenticated, setAuthenticated] = useState(isAuthenticated);
+  const [isSettingGmailFilter, setIsSettingGmailFilter] = useState(false);
 
   const [promptWarn, setPromptWarn] = useState(false);
   const [editBlockedDomains, setEditBlockedDomains] = useState(false);
   // const [editBDChecks, setEditBDChecks] = useState<boolean[]>([]);
   const [editBDChecks, setEditBDChecks] = useState(Array(10).fill(false));
+  const [gmailCheck, setGmailCheck] = useState("");
 
   useEffect(() => {
     if (promptWarn) setPromptWarn(false);
@@ -125,7 +128,8 @@ function CoreApp() {
       setPromptWarn(true);
       return false;
     }
-    chrome.runtime.sendMessage({ type: "setEmail", email: tempEmail });
+    setResponsePrompt("");
+    chrome.runtime.sendMessage({ type: "setEmail", email: email });
     return true;
   };
   //////////////////////////////////////////
@@ -133,8 +137,13 @@ function CoreApp() {
 
   const registerEmail = () => {
     console.log("registerEmail");
+    console.log("registerEmail");
+    console.log(tempEmail);
+    console.log(tempEmail.length);
+    console.log(email);
+
     let emailVal: string;
-    if (tempEmail === "") {
+    if (tempEmail === "" || tempEmail.length < 10) {
       emailVal = email;
     } else {
       emailVal = tempEmail;
@@ -143,6 +152,10 @@ function CoreApp() {
       configEmailDetails(emailVal);
       setSettingsOpen(false);
     }
+
+    console.log(emailVal);
+    console.log("emailVal");
+    console.log("registerEmail");
   };
   //////////////////////////////////////////
   //////////////////////////////////////////
@@ -409,42 +422,42 @@ function CoreApp() {
     setSettingsOpen(!settingsOpen);
   };
 
-  const saveBlockedDomains = () => {
-    setEditBlockedDomains(false);
+  // const saveBlockedDomains = () => {
+  //   setEditBlockedDomains(false);
 
-    let temp: string[] = [];
-    console.log(editBDChecks);
-    console.log(blockedDomains);
-    console.log(blockedDomains.length);
+  //   let temp: string[] = [];
+  //   console.log(editBDChecks);
+  //   console.log(blockedDomains);
+  //   console.log(blockedDomains.length);
 
-    for (let i = 0; i < blockedDomains.length; i++) {
-      if (!editBDChecks[i]) {
-        temp.push(blockedDomains[i]);
-      }
-    }
+  //   for (let i = 0; i < blockedDomains.length; i++) {
+  //     if (!editBDChecks[i]) {
+  //       temp.push(blockedDomains[i]);
+  //     }
+  //   }
 
-    console.log(temp);
+  //   console.log(temp);
 
-    blockedDomains = temp;
+  //   blockedDomains = temp;
 
-    chrome.runtime.sendMessage(
-      { type: "addBlockedDomains", blockedDomains: blockedDomains },
-      (response: any) => {
-        blockedDomains = response.blockedDomains;
-      }
-    );
+  //   chrome.runtime.sendMessage(
+  //     { type: "addBlockedDomains", blockedDomains: blockedDomains },
+  //     (response: any) => {
+  //       blockedDomains = response.blockedDomains;
+  //     }
+  //   );
 
-    // setEditBDChecks(temp)
+  //   // setEditBDChecks(temp)
 
-    //edit local domain list
+  //   //edit local domain list
 
-    //send new domain list back
+  //   //send new domain list back
 
-    // if (settingsOpen) {
-    //   setResponsePrompt('')
-    // }
-    // setSettingsOpen(!settingsOpen)
-  };
+  //   // if (settingsOpen) {
+  //   //   setResponsePrompt('')
+  //   // }
+  //   // setSettingsOpen(!settingsOpen)
+  // };
   //////////////////////////////////////////
   //////////////////////////////////////////
 
@@ -459,6 +472,7 @@ function CoreApp() {
 
   useEffect(() => {
     getToken();
+    setGmailCheck(window.location.hostname);
   }, []);
 
   useEffect(() => {
@@ -476,9 +490,6 @@ function CoreApp() {
   }
   console.log("THIS IS THE USER OKAY");
   console.log(user);
-  console.log(user);
-  console.log(user);
-  console.log(user);
 
   // return(
   //   <div>
@@ -486,8 +497,44 @@ function CoreApp() {
   //   </div>
   // )
 
+  if (gmailCheck.includes("mail.google.com")) {
+    console.log("HJKHASKJDhKJAHSDJKHSJKSAHDJKASHDKAHj");
+    console.log("HJKHASKJDhKJAHSDJKHSJKSAHDJKASHDKAHj");
+    console.log("HJKHASKJDhKJAHSDJKHSJKSAHDJKASHDKAHj");
+    console.log("HJKHASKJDhKJAHSDJKHSJKSAHDJKASHDKAHj");
+    console.log("HJKHASKJDhKJAHSDJKHSJKSAHDJKASHDKAHj");
+    console.log("HJKHASKJDhKJAHSDJKHSJKSAHDJKASHDKAHj");
+    console.log("HJKHASKJDhKJAHSDJKHSJKSAHDJKASHDKAHj");
+
+    return (
+      <div className={styles.master_styles}>
+        <div
+          className={waiter && !dismiss ? styles.tester_after : styles.tester}
+        >
+          <div className={styles.container}>
+            <button
+              className={styles.x_button}
+              onClick={() => setDismiss(!dismiss)}
+            >
+              {" "}
+              <FontAwesomeIcon icon={faXmark} />
+            </button>
+            {/* <AuthenticationButton/> */}
+            <img className={styles.image_container} src={img} />
+            <button className={styles.settings_button} onClick={settingsButton}>
+              {" "}
+              <FontAwesomeIcon icon={faGear} />
+            </button>
+            This is the gmail product page
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.master_styles}>
+      {/* <GmailAuth/> */}
       <div
         className={
           emailOnPage && waiter && !dismiss
@@ -525,51 +572,17 @@ function CoreApp() {
             settingsOpen ? (
               editBlockedDomains ? (
                 <div>
-                  <div style={{ fontSize: "1.5vw" }}>Blocked Domains</div>f
-
-                  <div className={styles.domain_container}>
-                    {blockedDomains.map((domain, index) => {
-                      // const temp = editBDChecks
-                      // temp[index] = true
-                      // // setEditBDChecks(temp)
-
-                      console.log("the domain render is going");
-
-                      return (
-                        <div className={styles.domain_unit_container}>
-                          <input
-                            type="checkbox"
-                            defaultChecked={true}
-                            className={styles.domain_units}
-                            onChange={(e) => {
-                              console.log("the onchange is going");
-                              let temp = editBDChecks;
-                              // console.log(temp)
-                              // console.log(temp[index])
-                              // console.log(editBDChecks)
-                              // console.log(editBDChecks[index])
-                              temp[index] = !temp[index];
-                              setEditBDChecks(temp);
-                            }}
-                          />
-                          <div className={styles.domain_units}>{domain}</div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  {/* <br /> */}
-                  <button
-                    className={styles.fill_button}
-                    onClick={saveBlockedDomains}
-                  >
-                    Save Changes
-                  </button>
+                  <EditBlockedDomains
+                    setEditBlockedDomains={setEditBlockedDomains}
+                    editBlockedDomains={editBlockedDomains}
+                    blockedDomains={blockedDomains}
+                  />
                 </div>
               ) : (
                 <div className={styles.container}>
-                  <div style={{ fontSize: "1.7vw", position: "relative" }}>
+                  {/* <div style={{ fontSize: "1.7vw", position: "relative" }}>
                     Settings
-                  </div>
+                  </div> */}
                   {/* <br></br> */}
 
                   <div style={{ fontSize: "1.3vw", position: "relative" }}>
@@ -612,6 +625,19 @@ function CoreApp() {
                   >
                     Manage Domains
                   </button>
+
+                  <a
+                    href="https://mail.google.com"
+                    target="_blank"
+                    className={styles.inbox_link}
+                  >
+                    <button
+                      className={styles.fill_button}
+                      style={{ width: "95%" }}
+                    >
+                      Manage Inbox
+                    </button>
+                  </a>
 
                   {/* <br></br> */}
                   <button
@@ -677,10 +703,10 @@ function CoreApp() {
                     className={styles.fill_button}
                     onClick={() => fill(subVal)}
                   >
-                    Fill away!
+                    Fill!
                   </button>
                   <button className={styles.block_button} onClick={block}>
-                    Don't show again
+                    Don't show
                   </button>
                 </div>
               </div>

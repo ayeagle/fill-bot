@@ -179,17 +179,33 @@
 
 }
 
+.inbox_link {
+    border: none;
+    background-color: rgb(253, 253, 253);
+
+}
+
+.inbox_link:hover {
+    background-color: rgb(253, 253, 253);
+}
+.inbox_link :hover {
+    background-color: rgb(253, 253, 253);
+}
+
 .fill_button {
     position: relative;
     border-radius: 10px;
     background-color: rgb(253, 253, 253);
     color: rgb(0, 0, 0);
     justify-content: center;
+    min-width: 30%;
+    /* width: 100%; */
     margin: 0 auto;
     padding: .5vw;
     margin: .5vw;
     font-size: 1vw;
     transition: .1s;
+    text-decoration: none;
 }
 
 .fill_button:hover {
@@ -199,6 +215,7 @@
     color: rgb(0, 0, 0);
     opacity: 80%;
     transition: 1s;
+    
     /* padding: 1vw; */
     /* font-size: 1.5vw; */
 }
@@ -208,6 +225,8 @@
     border-radius: 10px;
     background-color: rgb(253, 253, 253);
     color: rgb(0, 0, 0);
+    min-width: 30%;
+
     justify-content: center;
     padding: .1vw;
     margin: .5vw;
