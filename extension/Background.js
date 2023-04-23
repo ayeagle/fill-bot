@@ -25,19 +25,20 @@ const printStorage = () => {
 // printStorage()
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    // deleteRecords()
     if (request.type === "setDBVals") {
 
 
         chrome.storage.sync.get(["usedEmails"], (result) => {
-            // console.log("this is the usedemails sync get")
-            // console.log(result)
-            // console.log(result.usedEmails)
-            // console.log(result.usedEmails[0])
+            console.log("this is the usedemails sync get")
+            console.log(result)
+            console.log(result.usedEmails)
+            console.log(result.usedEmails[0])
             if (result.usedEmails[0]) {
                 usedEmails = result.usedEmails
             }
             else {
-                chrome.storage.local.get(["email"], (result) => {
+                chrome.storage.local.get(["usedEmails"], (result) => {
                     if (result.usedEmails[0]) {
                         usedEmails = result.usedEmails
                     }
@@ -56,14 +57,14 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                 blockedDomains = result.blockedDomains
             }
             else {
-                chrome.storage.local.get(["email"], (result) => {
-                    if (result.blockedDomains[0]) {
+                chrome.storage.local.get(["blockedDomains"], (result) => {
+                    if (result.blockedDomains.length > 0) {
                         blockedDomains = result.blockedDomains
                     }
                 })
             }
-            console.log("this is usedEmails value locally in the background")
-            console.log(usedEmails)
+            console.log("this is blockeddomains value locally in the background")
+            console.log(blockedDomains)
         })
         
         

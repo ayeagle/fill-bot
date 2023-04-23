@@ -10,6 +10,7 @@ import AuthenticationButton from "./AuthenticationButton";
 import { useLocation } from "react-router-dom";
 import { withAuthenticationRequired, useAuth0, User } from "@auth0/auth0-react";
 import EditBlockedDomains from "./EditBlockedDomains";
+import React from "react";
 
 let normalName: string;
 declare var window: any;
@@ -60,6 +61,9 @@ function CoreApp() {
   // const [editBDChecks, setEditBDChecks] = useState<boolean[]>([]);
   const [editBDChecks, setEditBDChecks] = useState(Array(10).fill(false));
   const [gmailCheck, setGmailCheck] = useState("");
+  const [targetNode, setTargetNode] = useState<HTMLElement | null>(null);
+
+  const [emailFilterString, setEmailFilterString] = useState("");
 
   useEffect(() => {
     if (promptWarn) setPromptWarn(false);
@@ -186,6 +190,19 @@ function CoreApp() {
   //////////////////////////////////////////
   //////////////////////////////////////////
 
+  async function execFill() {
+    chrome.runtime.sendMessage(
+      { type: "getCurrentSubVal" },
+      (response: any) => {
+        console.log("the async get email method was invoked");
+        console.log(response);
+        console.log(response.currentSubVal);
+
+        fill(response.currentSubVal);
+      }
+    );
+  }
+
   async function fill(subby: any) {
     console.log("fill");
     console.log("fill");
@@ -311,7 +328,7 @@ function CoreApp() {
     let temp = `${email.substring(
       0,
       email.toUpperCase().indexOf("@")
-    )}+${normalName}${email.substring(
+    )}+${normalName}${String.fromCharCode(95)}${"flytr4p"}${email.substring(
       email.toUpperCase().indexOf("@"),
       email.length
     )}`;
@@ -339,14 +356,27 @@ function CoreApp() {
   //////////////////////////////////////////
   //////////////////////////////////////////
 
+  async function fetchDBVals() {
+    let promise = await chrome.runtime.sendMessage(
+      { type: "setDBVals" },
+      (response: any) => {
+        blockedDomains = response.blockedDomains;
+        usedEmails = response.usedEmails;
+      }
+    );
+
+    console.log(usedEmails);
+    console.log(usedEmails);
+    console.log(usedEmails);
+    console.log(usedEmails);
+    genUsedEmailsFilterArray();
+  }
+
   useEffect(() => {
     //check if the blocked domains exists
     //check if the blocked domains exists
 
-    chrome.runtime.sendMessage({ type: "setDBVals" }, (response: any) => {
-      blockedDomains = response.blockedDomains;
-      usedEmails = response.usedEmails;
-    });
+    fetchDBVals();
 
     let simpleDomain = window.location.href.split("//")[2];
 
@@ -394,6 +424,21 @@ function CoreApp() {
   //////////////////////////////////////////
   //////////////////////////////////////////
   //////////////////////////////////////////
+
+  const genUsedEmailsFilterArray = () => {
+    let temp = "";
+    usedEmails.forEach((e) => {
+      temp += `To:${e}` + " ";
+    });
+    console.log("{" + temp + "}");
+    console.log("{" + temp + "}");
+    console.log("{" + temp + "}");
+    setEmailFilterString("{" + temp + "}");
+    console.log("{" + temp + "}");
+    console.log("{" + temp + "}");
+    console.log("{" + temp + "}");
+    return "{" + temp + "}";
+  };
 
   const block = () => {
     if (!doesExist(blockedDomains, normalName)) {
@@ -470,10 +515,58 @@ function CoreApp() {
     }
   };
 
+  let email_filter: any;
+
   useEffect(() => {
     getToken();
     setGmailCheck(window.location.hostname);
+    // var email_filter = document.getElementById(':nh');
+
+    email_filter = document.querySelectorAll("div.ZF-Av");
+    console.log(email_filter);
+    console.log(email_filter);
+    console.log(email_filter);
+    console.log(email_filter);
+
+    genUsedEmailsFilterArray();
+
+    activateFilters();
+    setTimeout(() => {
+      activateFilters();
+    }, 1000);
   }, []);
+
+  const activateFilters = () => {
+    console.log("activate filters is live");
+    // var button = document.querySelector(".gb_bf") as HTMLButtonElement;
+    // button.click();
+  };
+
+  useEffect(() => {
+    const observer = new MutationObserver((mutationsList, observer) => {
+      console.log("mutation observer is running");
+      for (const mutation of mutationsList) {
+        if (mutation.type === "childList") {
+          for (let i = 0; i < mutation.addedNodes.length; i++) {
+            const addedNode = mutation.addedNodes[i] as Element;
+            if (
+              addedNode.tagName === "DIV" &&
+              addedNode.classList.contains("ZF-Av")
+            ) {
+              // Do something with the div
+              console.log("Found the target div!");
+              // Stop observing mutations since the div has been found
+              observer.disconnect();
+              return;
+            }
+          }
+        }
+      }
+    });
+    if (targetNode) {
+      observer.observe(targetNode, { childList: true, subtree: true });
+    }
+  }, [targetNode]);
 
   useEffect(() => {
     console.log("this is the outcome of the isAuthenticated thingee");
@@ -496,6 +589,7 @@ function CoreApp() {
   //       { isLoading ? <>Loading</>: !authenticated ? <>Sign in</> : <>You are already signed in</> }
   //   </div>
   // )
+  console.log("334242323234");
 
   if (gmailCheck.includes("mail.google.com")) {
     console.log("HJKHASKJDhKJAHSDJKHSJKSAHDJKASHDKAHj");
@@ -504,7 +598,9 @@ function CoreApp() {
     console.log("HJKHASKJDhKJAHSDJKHSJKSAHDJKASHDKAHj");
     console.log("HJKHASKJDhKJAHSDJKHSJKSAHDJKASHDKAHj");
     console.log("HJKHASKJDhKJAHSDJKHSJKSAHDJKASHDKAHj");
-    console.log("HJKHASKJDhKJAHSDJKHSJKSAHDJKASHDKAHj");
+    console.log(email_filter);
+    console.log(email_filter);
+    console.log(email_filter);
 
     return (
       <div className={styles.master_styles}>
@@ -525,7 +621,39 @@ function CoreApp() {
               {" "}
               <FontAwesomeIcon icon={faGear} />
             </button>
-            This is the gmail product page
+            Use this in a filter to remove all Flytrap created emails:
+            <br />
+            {/* {emailFilterString} */}
+            <h4 className={styles.email_filter_wrapper}>
+              <div className={styles.copy_filters}>
+                Copy to Clipboard
+                {/* {"{ "} */}
+                <h4 className={styles.span_indent}>
+                  {usedEmails.map((email, index) => {
+                    return (
+                      <React.Fragment key={index}>
+                        {index == 0 && (
+                          <span style={{ left: "-10px", position: "relative" }}>
+                            {"{"}
+                            <br />
+                          </span>
+                        )}
+                        {"To:"}
+                        {email}{" "}
+                        {index == usedEmails.length - 1 && (
+                          <span style={{ left: "-10px", position: "relative" }}>
+                            <br />
+                            {"}"}
+                          </span>
+                        )}
+                      </React.Fragment>
+                    );
+                  })}
+                  <br />
+                </h4>
+              </div>
+              {/* &#125; */}
+            </h4>
           </div>
         </div>
       </div>
@@ -627,7 +755,7 @@ function CoreApp() {
                   </button>
 
                   <a
-                    href="https://mail.google.com"
+                    href="https://mail.google.com/mail/u/0/#settings/filters"
                     target="_blank"
                     className={styles.inbox_link}
                   >
@@ -701,7 +829,7 @@ function CoreApp() {
                 >
                   <button
                     className={styles.fill_button}
-                    onClick={() => fill(subVal)}
+                    onClick={() => execFill()}
                   >
                     Fill!
                   </button>
