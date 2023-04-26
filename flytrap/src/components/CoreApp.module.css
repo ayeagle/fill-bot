@@ -331,7 +331,7 @@
   padding: none;
   margin: none;
   text-align: left;
-  font-size: 10px;
+  font-size: 5px;
   background-color: rgb(206, 206, 206);
   padding: 1vh;
   border-radius: 10px;
@@ -348,7 +348,7 @@
   transition: 1.5s;
   color: transparent;
 }
-
+/* 
 .copy_filters {
   padding: 1vh;
   border-radius: 10px;
@@ -356,7 +356,6 @@
   top: 40%;
   margin: 0 auto;
   color: transparent;
-  /* height: 100%; */
   width: 100%;
   font-size: 15px;
   transition: .5s;
@@ -368,4 +367,4 @@
   transition: .5s;
 
   color: black;
-}
+} */
