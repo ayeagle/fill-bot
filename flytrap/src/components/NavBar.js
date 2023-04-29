@@ -1,8 +1,4 @@
 
-
-
-// src/components/nav-bar.js
-
 import React from 'react';
 
 import AuthNav from './AuthNav';
