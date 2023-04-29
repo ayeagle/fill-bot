@@ -5,8 +5,6 @@
 
 import React from 'react';
 
-
-// import MainNav from './main-nav';
 import AuthNav from './AuthNav';
 
 const NavBar = () => {
