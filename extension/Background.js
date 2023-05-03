@@ -104,6 +104,7 @@ const deleteRecords = () => {
     chrome.storage.sync.set({ 'blockedDomains': [] })
 }
 
+
 // deleteRecords()
 
 
