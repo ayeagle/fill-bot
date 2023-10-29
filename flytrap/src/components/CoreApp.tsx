@@ -167,12 +167,22 @@ function CoreApp() {
   const pageContainsEmailFields = (inputsArray: Array<any>) => {
     console.log("pageContainsEmailFields");
     inputsArray.forEach((input, index) => {
+
+      let computedStyle = window.getComputedStyle(input);
+
       if (
         (inputChecker(input.name, "EMAIL") ||
           inputChecker(input.placeholder, "EMAIL") ||
           inputChecker(input.type, "EMAIL")) &&
-        input.id !== "no_fill_email_input"
+        input.id !== "no_fill_email_input" &&
+        computedStyle.display !== "none" &&
+        computedStyle.visibility !== "hidden" &&
+        computedStyle.visibility !== "collapse" &&
+        computedStyle.zIndex !== -1 &&
+        computedStyle.type !== "hidden"
       ) {
+
+        console.log(input);
         if (inputsArray.length > index + 1) {
           if (
             !inputChecker(inputsArray[index + 1].name, "PASSWORD") &&
@@ -258,13 +268,24 @@ function CoreApp() {
       }
     }
 
-    const inputElements = document.querySelectorAll("input");
+    // const inputElements = document.querySelectorAll("input");
+    const inputElements: HTMLInputElement[] = Array.from(
+      document.querySelectorAll("input")
+    ) as HTMLInputElement[];
+
     inputElements.forEach((input) => {
+      let computedStyle = window.getComputedStyle(input);
+
       if (
         (inputChecker(input.name, "EMAIL") ||
           inputChecker(input.placeholder, "EMAIL") ||
           inputChecker(input.type, "EMAIL")) &&
-        input.id !== "no_fill_email_input"
+        input.id !== "no_fill_email_input" &&
+        computedStyle.display !== "none" &&
+        computedStyle.visibility !== "hidden" &&
+        computedStyle.visibility !== "collapse" &&
+        computedStyle.zIndex !== -1 &&
+        computedStyle.type !== "hidden"
       ) {
         // setEmailOnPage(true)
         input.value = subby;
@@ -396,7 +417,9 @@ function CoreApp() {
       normalName = "We couldn't find a name :(";
     }
 
-    allInputs = Array.from(document.querySelectorAll("input"));
+    const allInputs: HTMLInputElement[] = Array.from(
+      document.querySelectorAll("input")
+    ) as HTMLInputElement[];
 
     chrome.runtime.sendMessage({ type: "getLogo" }, (response: any) => {
       console.log(response);
@@ -605,7 +628,11 @@ function CoreApp() {
     return (
       <div className={styles.master_styles}>
         <div
-          className={waiter && !dismiss ? styles.primary_container_after : styles.primary_container_before}
+          className={
+            waiter && !dismiss
+              ? styles.primary_container_after
+              : styles.primary_container_before
+          }
         >
           <div className={styles.container}>
             <button
