@@ -605,7 +605,7 @@ function CoreApp() {
     return (
       <div className={styles.master_styles}>
         <div
-          className={waiter && !dismiss ? styles.tester_after : styles.tester}
+          className={waiter && !dismiss ? styles.primary_container_after : styles.primary_container_before}
         >
           <div className={styles.container}>
             <button
@@ -666,8 +666,8 @@ function CoreApp() {
       <div
         className={
           emailOnPage && waiter && !dismiss
-            ? styles.tester_after
-            : styles.tester
+            ? styles.primary_container_after
+            : styles.primary_container_before
         }
       >
         {/* <header> */}

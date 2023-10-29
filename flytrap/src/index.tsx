@@ -45,8 +45,8 @@ globalStyles.innerHTML = `
   #${rootElement.id} {
   position: fixed;
   top: 0;
-  right: 5vw;
-  width: 25%;
+  right: 100px;
+  width: 400px;
   height: auto;
   background: transparent;
   z-index: 999999999;
