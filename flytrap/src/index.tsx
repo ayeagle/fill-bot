@@ -1,16 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./app";
-import styles from "./App.module.css";
 import { BrowserRouter as Router } from "react-router-dom";
 import Auth0ProviderWithHistory from "./auth/auth0-provider-with-history";
 import { useAuth0 } from "@auth0/auth0-react";
 import CoreApp from "./components/CoreApp";
 import { createBrowserHistory } from "history";
 
-console.log("index has loaded");
-
 import { Auth0Provider } from "@auth0/auth0-react";
+
+console.log("index has loaded");
 
 const onRedirectCallback = (appState: any) => {
   const history = createBrowserHistory();

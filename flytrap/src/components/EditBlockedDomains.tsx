@@ -14,6 +14,10 @@ export default function EditBlockedDomains({
 }: EditBlockedDomainsProps) {
   const [editBDChecks, setEditBDChecks] = useState(Array(10).fill(false));
 
+
+  console.warn("DOMAIN CHANGES");
+
+
   useEffect(() => {
     //check if the blocked domains exists
     //check if the blocked domains exists
@@ -54,11 +58,12 @@ export default function EditBlockedDomains({
 
       <div className={styles.domain_container}>
         {blockedDomains.map((domain, index) => {
-          // const temp = editBDChecks
-          // temp[index] = true
-          // // setEditBDChecks(temp)
-
           console.log("the domain render is going");
+          console.log("the domain render is going");
+          console.log("the domain render is going");
+          console.log("the domain render is going");
+          console.log("the domain render is going");
+          console.log(domain);
 
           return (
             <div className={styles.domain_unit_container}>
